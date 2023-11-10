@@ -1,3 +1,5 @@
+# function for debugging
+
 import pygame
 
 pygame.init()

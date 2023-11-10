@@ -1,5 +1,8 @@
+# game start
+
 import pygame, sys
 from settings import *
+from level import *
 
 
 class Game:
@@ -11,6 +14,8 @@ class Game:
         pygame.display.set_caption("Spawner3")
         self.clock = pygame.time.Clock()
 
+        self.level = Level()
+
     def run(self):
         # game loop
         while True:
@@ -20,6 +25,9 @@ class Game:
                     sys.exit()
 
             self.screen.fill("Black")
+
+            self.level.run()
+
             pygame.display.update()
             self.clock.tick(FPS)
 
