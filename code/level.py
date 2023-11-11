@@ -38,10 +38,10 @@ class Level:
 
                     if style == "test":
                         if val != "-1":
-                            surf = graphics["test"][int(val)]
+                            surf = graphics["test"][int(0)]  # later depends on val
                             Tile(
                                 (x, y),
-                                [self.visible_sprites],
+                                [self.visible_sprites, self.obstacle_sprites],
                                 "test",
                                 surf,
                             )
