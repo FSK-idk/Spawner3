@@ -4,6 +4,7 @@ import pygame
 from settings import *
 from support import *
 from tile import *
+from player import Player
 
 
 class Level:
@@ -46,9 +47,11 @@ class Level:
                                 surf,
                             )
 
+        self.player = Player((0, 0), [self.visible_sprites], self.obstacle_sprites)
+
     def run(self):
         # update and draw the level
-        self.visible_sprites.custom_draw()
+        self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
 
 
@@ -61,14 +64,10 @@ class YSortGroup(pygame.sprite.Group):
         self.half_height = self.display_surf.get_size()[1] // 2
         self.offset = pygame.math.Vector2()
 
-    def custom_draw(self):
-        # get "player" pos
-        player_pos_x = 200
-        player_pos_y = 200
-
+    def custom_draw(self, player):
         # get the offset
-        self.offset.x = player_pos_x - self.half_width
-        self.offset.y = player_pos_y - self.half_height
+        self.offset.x = player.rect.centerx - self.half_width
+        self.offset.y = player.rect.centery - self.half_height
 
         # draw sprites
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
