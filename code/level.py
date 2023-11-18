@@ -15,7 +15,7 @@ class Level:
         # sprite groups
         # visible sprites
         self.visible_sprites = YSortGroup()
-        # collision sprites (for the feature)
+        # collision sprites
         self.obstacle_sprites = pygame.sprite.Group()
 
         # sprite setup
