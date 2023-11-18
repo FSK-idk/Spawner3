@@ -23,7 +23,12 @@ class Level:
 
     def create_map(self):
         # import layout and tileset
-        layouts = {"test": import_csv_layout("./levels/test/test.csv")}
+        layouts = {
+            "test": import_csv_layout("./levels/test/test.csv"),
+            "mountain_constraints": import_csv_layout(
+                "./levels/mountain/mountain_constraints.csv"
+            ),
+        }
         graphics = {
             "test": import_surfaces("./graphics/test_tileset"),
         }
@@ -37,9 +42,10 @@ class Level:
                     if row_index % 2 == 1:
                         x += TILESIZE // 2
 
-                    if style == "test":
+                    if style == "mountain_constraints":
                         if val != "-1":
-                            surf = graphics["test"][int(0)]  # later depends on val
+                            # visible for debugging
+                            surf = graphics["test"][int(0)]
                             Tile(
                                 (x, y),
                                 [self.visible_sprites, self.obstacle_sprites],
@@ -47,7 +53,7 @@ class Level:
                                 surf,
                             )
 
-        self.player = Player((0, 0), [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player((200, 200), [self.visible_sprites], self.obstacle_sprites)
 
     def run(self):
         # update and draw the level
