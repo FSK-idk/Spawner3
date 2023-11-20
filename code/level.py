@@ -1,6 +1,8 @@
 # level class where everything happens
 
 import pygame
+from pygame.surface import Surface
+
 from settings import *
 from support import *
 from tile import *
@@ -10,7 +12,7 @@ from player import Player
 class Level:
     def __init__(self):
         # general setup
-        self.display_surf = pygame.display.get_surface()
+        self.display_surface = pygame.display.get_surface()
 
         # sprite groups
         # visible sprites
@@ -52,6 +54,8 @@ class Level:
         self.player = Player((0, 0), [self.visible_sprites], self.obstacle_sprites)
 
     def run(self):
+        self.visible_sprites.key_log()
+
         # update and draw the level
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
@@ -62,11 +66,43 @@ class YSortGroup(pygame.sprite.Group):
         # general setup
         super().__init__()
         self.display_surf = pygame.display.get_surface()
+        self.offset = pygame.math.Vector2()
         self.half_width = self.display_surf.get_size()[0] // 2
         self.half_height = self.display_surf.get_size()[1] // 2
-        self.offset = pygame.math.Vector2()
+
+        # coeff to resize temp surface
+        self.resize_coeff = 1
+        self.resize_step = .1
+        self.max_resize_coeff = 2
+        self.min_resize_coeff = 1
+
+        # creating temp surface with alpha channel to resize level
+        self.temp_surface = Surface(self.display_surf.get_size(), pygame.SRCALPHA)
+
+    def key_log(self):
+        mousewheel_event = pygame.event.get(pygame.MOUSEBUTTONUP)
+
+        if not mousewheel_event:
+            return
+
+        if mousewheel_event[0].button == 4:
+            self.resize_coeff += self.resize_step
+
+        elif mousewheel_event[0].button == 5:
+            self.resize_coeff -= self.resize_step
+
+        if self.resize_coeff > self.max_resize_coeff:
+            self.resize_coeff = self.max_resize_coeff
+
+        if self.resize_coeff < self.min_resize_coeff:
+            self.resize_coeff = self.min_resize_coeff
 
     def custom_draw(self, player):
+        display_size = self.display_surf.get_size()
+
+        # do transparent background for temp surface
+        self.temp_surface.fill((0, 0, 0, 0))
+
         # get the offset
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
@@ -74,4 +110,9 @@ class YSortGroup(pygame.sprite.Group):
         # draw sprites
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_pos = sprite.rect.topleft - self.offset
-            self.display_surf.blit(sprite.image, offset_pos)
+            self.temp_surface.blit(sprite.image, offset_pos)
+
+        display_size = self.display_surf.get_size()
+        resized_size = (display_size[0] * self.resize_coeff, display_size[1] * self.resize_coeff)
+        self.display_surf.blit(pygame.transform.scale(self.temp_surface, resized_size),
+                               ((display_size[0] - resized_size[0]) / 2, (display_size[1] - resized_size[1]) / 2))
