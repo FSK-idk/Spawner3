@@ -19,10 +19,9 @@ class Game:
     def run(self):
         # game loop
         while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+            if pygame.event.get(pygame.QUIT):
+                pygame.quit()
+                sys.exit()
 
             self.screen.fill("Black")
 
