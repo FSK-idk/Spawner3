@@ -26,7 +26,10 @@ class Level:
     def create_map(self):
         # import layout and tileset
         layouts = {
-            "test": import_csv_layout(get_parent_dir() + "/levels/test/test.csv")
+            "test": import_csv_layout(get_parent_dir() + "/levels/test/test.csv"),
+            "mountain_constraints": import_csv_layout(
+                get_parent_dir() + "/levels/mountain/mountain_constraints.csv"
+            ),
         }
         graphics = {
             "test": import_surfaces(get_parent_dir() + "/graphics/test_tileset"),
@@ -41,9 +44,10 @@ class Level:
                     if row_index % 2 == 1:
                         x += TILESIZE // 2
 
-                    if style == "test":
+                    if style == "mountain_constraints":
                         if val != "-1":
-                            surf = graphics["test"][int(0)]  # later depends on val
+                            # visible for debugging
+                            surf = graphics["test"][int(0)]
                             Tile(
                                 (x, y),
                                 [self.visible_sprites, self.obstacle_sprites],
@@ -51,7 +55,7 @@ class Level:
                                 surf,
                             )
 
-        self.player = Player((0, 0), [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player((200, 200), [self.visible_sprites], self.obstacle_sprites)
 
     def run(self):
         self.visible_sprites.key_log()
@@ -72,7 +76,7 @@ class YSortGroup(pygame.sprite.Group):
 
         # coeff to resize temp surface
         self.resize_coeff = 1
-        self.resize_step = .1
+        self.resize_step = 0.1
         self.max_resize_coeff = 2
         self.min_resize_coeff = 1
 
@@ -113,6 +117,14 @@ class YSortGroup(pygame.sprite.Group):
             self.temp_surface.blit(sprite.image, offset_pos)
 
         display_size = self.display_surf.get_size()
-        resized_size = (display_size[0] * self.resize_coeff, display_size[1] * self.resize_coeff)
-        self.display_surf.blit(pygame.transform.scale(self.temp_surface, resized_size),
-                               ((display_size[0] - resized_size[0]) / 2, (display_size[1] - resized_size[1]) / 2))
+        resized_size = (
+            display_size[0] * self.resize_coeff,
+            display_size[1] * self.resize_coeff,
+        )
+        self.display_surf.blit(
+            pygame.transform.scale(self.temp_surface, resized_size),
+            (
+                (display_size[0] - resized_size[0]) / 2,
+                (display_size[1] - resized_size[1]) / 2,
+            ),
+        )

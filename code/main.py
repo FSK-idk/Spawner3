@@ -10,7 +10,7 @@ class Game:
         # general setup
         pygame.init()
 
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Spawner3")
         self.clock = pygame.time.Clock()
 
