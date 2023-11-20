@@ -3,6 +3,7 @@
 import pygame
 from csv import reader
 from os import walk
+from os.path import dirname, abspath
 
 
 def import_csv_layout(path):
@@ -26,3 +27,7 @@ def import_surfaces(path):
             surf_list.append(image_surf)
 
     return surf_list
+
+
+def get_parent_dir(path=__file__):
+    return dirname(dirname(abspath(path)))
