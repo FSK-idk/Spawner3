@@ -26,7 +26,10 @@ class Level:
     def create_map(self):
         # import layout and tileset
         layouts = {
-            "test": import_csv_layout(get_parent_dir() + "/levels/test/test.csv")
+            "test": import_csv_layout(get_parent_dir() + "/levels/test/test.csv"),
+            "mountain_constraints": import_csv_layout(
+                get_parent_dir() + "/levels/mountain/mountain_constraints.csv"
+            ),
         }
         graphics = {
             "test": import_surfaces(get_parent_dir() + "/graphics/test_tileset"),
