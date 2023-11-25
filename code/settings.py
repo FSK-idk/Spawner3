@@ -1,5 +1,6 @@
 # game constants
 import pygame
+from utils import *
 
 
 class Config:
@@ -7,6 +8,7 @@ class Config:
     HEIGHT = 720
     FPS = 60
     TILE_SIZE = 32
+    PROJECT_FOLDER = get_parent_dir()
 
 
 class HotKeys:

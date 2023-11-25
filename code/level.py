@@ -1,16 +1,15 @@
 # level class where everything happens
 
 import pygame
-from pygame.surface import Surface
-
 from settings import *
-from support import *
+from utils import *
 from tile import *
-from player import Player
+from player import *
+from debug import debug
 
 
 class Level:
-    def __init__(self):
+    def __init__(self) -> None:
         # general setup
         self.display_surface = pygame.display.get_surface()
 
@@ -23,16 +22,18 @@ class Level:
         # sprite setup
         self.create_map()
 
-    def create_map(self):
-        # import layout and tileset
+    def create_map(self) -> None:
+        # import layout and sprites
         layouts = {
-            "test": import_csv_layout(get_parent_dir() + "/levels/test/test.csv"),
+            "test": import_csv_layout(Config.PROJECT_FOLDER + "/levels/test/test.csv"),
             "mountain_constraints": import_csv_layout(
-                get_parent_dir() + "/levels/mountain/mountain_constraints.csv"
+                Config.PROJECT_FOLDER + "/levels/mountain/mountain_constraints.csv"
             ),
         }
         graphics = {
-            "test": import_surfaces(get_parent_dir() + "/graphics/test_tileset"),
+            "test": import_surfaces(
+                Config.PROJECT_FOLDER + "/graphics/sprites/ground/"
+            ),
         }
 
         # in each layout add new tiles in our groups
@@ -47,7 +48,7 @@ class Level:
                     if style == "mountain_constraints":
                         if val != "-1":
                             # visible for debugging
-                            surf = graphics["test"][int(0)]
+                            surf = graphics["test"][0]
                             Tile(
                                 (x, y),
                                 [self.visible_sprites, self.obstacle_sprites],
@@ -55,18 +56,19 @@ class Level:
                                 surf,
                             )
 
-        self.player = Player((200, 200), [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player((400, 400), [self.visible_sprites], self.obstacle_sprites)
 
-    def run(self):
+    def run(self) -> None:
         self.visible_sprites.key_log()
-
-        # update and draw the level
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
 
 
 class YSortGroup(pygame.sprite.Group):
-    def __init__(self):
+    def __init__(self) -> None:
+        # debug fps
+        self.clock = pygame.time.Clock()
+
         # general setup
         super().__init__()
         self.display_surf = pygame.display.get_surface()
@@ -74,16 +76,25 @@ class YSortGroup(pygame.sprite.Group):
         self.half_width = self.display_surf.get_size()[0] // 2
         self.half_height = self.display_surf.get_size()[1] // 2
 
+        # creating the floor
+        self.floor_surf = pygame.image.load(
+            Config.PROJECT_FOLDER + "/graphics/background/mountain.png"
+        ).convert_alpha()
+        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
+
         # coeff to resize temp surface
-        self.resize_coeff = 1
+        self.resize_coeff = 3
         self.resize_step = 0.1
-        self.max_resize_coeff = 2
-        self.min_resize_coeff = 1
+        self.max_resize_coeff = 4
+        self.min_resize_coeff = 2
 
         # creating temp surface with alpha channel to resize level
-        self.temp_surface = Surface(self.display_surf.get_size(), pygame.SRCALPHA)
+        self.temp_surface = pygame.surface.Surface(
+            self.display_surf.get_size(), pygame.SRCALPHA
+        )
 
-    def key_log(self):
+    def key_log(self) -> None:
+        # check mouse events
         mousewheel_event = pygame.event.get(pygame.MOUSEBUTTONUP)
 
         if not mousewheel_event:
@@ -101,15 +112,19 @@ class YSortGroup(pygame.sprite.Group):
         if self.resize_coeff < self.min_resize_coeff:
             self.resize_coeff = self.min_resize_coeff
 
-    def custom_draw(self, player):
+    def custom_draw(self, player) -> None:
         display_size = self.display_surf.get_size()
 
         # do transparent background for temp surface
         self.temp_surface.fill((0, 0, 0, 0))
 
-        # get the offset
+        # get offset
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
+
+        # draw floor
+        floor_offset_pos = self.floor_rect.topleft - self.offset
+        self.temp_surface.blit(self.floor_surf, floor_offset_pos)
 
         # draw sprites
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
@@ -121,6 +136,7 @@ class YSortGroup(pygame.sprite.Group):
             display_size[0] * self.resize_coeff,
             display_size[1] * self.resize_coeff,
         )
+
         self.display_surf.blit(
             pygame.transform.scale(self.temp_surface, resized_size),
             (
@@ -128,3 +144,7 @@ class YSortGroup(pygame.sprite.Group):
                 (display_size[1] - resized_size[1]) / 2,
             ),
         )
+
+        # debug fps
+        self.clock.tick()
+        debug(self.clock.get_fps())
