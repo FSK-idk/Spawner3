@@ -1,50 +1,59 @@
+# player class
+
 import pygame
 from settings import *
-from support import *
-
+from utils import *
 from collections import defaultdict
-
-anim_path = get_parent_dir() + '/graphics/sprites/player/'
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacle_sprites):
+    def __init__(self, pos, groups, obstacle_sprites) -> None:
         # general setup
         super().__init__(groups)
         self.image = pygame.image.load(
-            get_parent_dir() + "/graphics/sprites/player/forward/right/idle/idle 1.png"
+            Config.PROJECT_FOLDER
+            + "/graphics/sprites/player/idle/right/forward/idle right forward 1.png"
         ).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0, -Config.TILE_SIZE // 2)
+        self.hitbox = self.rect.inflate(
+            -Config.TILE_SIZE // 1.5, -Config.TILE_SIZE // 1.5
+        )
 
         # movement
         self.direction = pygame.math.Vector2()
-        self.speed = 5
+        self.speed = 10
 
-        # for collision
+        # collision
         self.obstacle_sprites = obstacle_sprites
 
-        # for animation
-        self.animations_per_second = 2
-        self.frame = 0
+        # animation
+        self.frame_rate = 6
+        self.frame_index = 0
 
-        self.anim_state = {
-            'forward_back': 'forward',
-            'run_idle': 'idle',
-            'right_left': 'right'
+        self.animation_state = {
+            "action": "idle",
+            "x_direction": "right",
+            "y_direction": "forward",
         }
 
-        self.animation_images = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+        # action -> x diraction -> y diraction
+        self.animation_images = defaultdict(
+            lambda: defaultdict(lambda: defaultdict(list))
+        )
 
-        for f in ['forward', 'back']:
-            for r in ['right', 'left']:
-                for i in ['run', 'idle']:
-                    self.animation_images[f][r][i] = import_surfaces(
-                        get_parent_dir() + f"/graphics/sprites/player/{f}/{r}/{i}")
+        for act in ["run", "idle"]:
+            for x_dir in ["right", "left"]:
+                for y_dir in ["forward", "back"]:
+                    self.animation_images[act][x_dir][y_dir] = import_surfaces(
+                        get_parent_dir()
+                        + f"/graphics/sprites/player/{act}/{x_dir}/{y_dir}"
+                    )
 
-    def input(self):
-        self.frame = (self.frame + 1) % (Config.FPS // self.animations_per_second)
+    def input(self) -> None:
+        self.change_direction()
+        self.change_animation_state()
 
+    def change_direction(self) -> None:
         if HotKeys.is_pressed(HotKeys.go_left):
             self.direction.x = -1
         elif HotKeys.is_pressed(HotKeys.go_right):
@@ -59,43 +68,54 @@ class Player(pygame.sprite.Sprite):
         else:
             self.direction.y = 0
 
-        self.change_animation_state()
-        self.image = self.get_animation_image()
-
-    def get_animation_image(self) -> pygame.Surface:
-        return self.animation_images[self.anim_state['forward_back']][self.anim_state['right_left']][
-            self.anim_state['run_idle']][
-            self.frame < Config.FPS // self.animations_per_second // 2]
-
     def change_animation_state(self) -> None:
+        if self.direction.x or self.direction.y:
+            self.animation_state["action"] = "run"
+        else:
+            self.animation_state["action"] = "idle"
+
         if self.direction.x > 0:
-            self.anim_state['right_left'] = 'right'
+            self.animation_state["x_direction"] = "right"
         elif self.direction.x < 0:
-            self.anim_state['right_left'] = 'left'
+            self.animation_state["x_direction"] = "left"
 
         if self.direction.y > 0:
-            self.anim_state['forward_back'] = 'forward'
+            self.animation_state["y_direction"] = "forward"
         elif self.direction.y < 0:
-            self.anim_state['forward_back'] = 'back'
+            self.animation_state["y_direction"] = "back"
 
-        if self.direction.x or self.direction.y:
-            self.anim_state['run_idle'] = 'run'
-        else:
-            self.anim_state['run_idle'] = 'idle'
+    def animate(self) -> None:
+        # get list of animations
+        act = self.animation_state["action"]
+        x_dir = self.animation_state["x_direction"]
+        y_dir = self.animation_state["y_direction"]
 
-    def move(self):
+        animations = self.animation_images[act][x_dir][y_dir]
+
+        # change frame index
+        self.frame_index += self.frame_rate / Config.FPS
+        if self.frame_index >= len(animations):
+            self.frame_index = 0
+
+        # set image
+        self.image = animations[int(self.frame_index)]
+        self.rect = self.image.get_rect(center=self.hitbox.center)
+
+    def move(self) -> None:
+        # normalize vector by ellipse
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
             self.direction.y /= 2
 
+        # change player position
         self.hitbox.x += self.direction.x * self.speed
         self.check_collision("horizontal")
         self.hitbox.y += self.direction.y * self.speed
         self.check_collision("vertical")
         self.rect.center = self.hitbox.center
 
-    def check_collision(self, diraction):
-        # moves the player back
+    def check_collision(self, diraction) -> None:
+        # move player back
         if diraction == "horizontal":
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
@@ -112,6 +132,7 @@ class Player(pygame.sprite.Sprite):
                     if self.direction.y > 0:  # move down
                         self.hitbox.bottom = sprite.hitbox.top
 
-    def update(self):
+    def update(self) -> None:
         self.input()
+        self.animate()
         self.move()
