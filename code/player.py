@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
             "y_direction": "forward",
         }
 
-        # action -> x diraction -> y diraction
+        # action -> x direction -> y direction
         self.animation_images = defaultdict(
             lambda: defaultdict(lambda: defaultdict(list))
         )
@@ -45,7 +45,7 @@ class Player(pygame.sprite.Sprite):
             for x_dir in ["right", "left"]:
                 for y_dir in ["forward", "back"]:
                     self.animation_images[act][x_dir][y_dir] = import_surfaces(
-                        get_parent_dir()
+                        Config.PROJECT_FOLDER
                         + f"/graphics/sprites/player/{act}/{x_dir}/{y_dir}"
                     )
 
