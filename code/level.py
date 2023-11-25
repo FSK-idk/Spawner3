@@ -66,6 +66,7 @@ class Level:
 
 class YSortGroup(pygame.sprite.Group):
     def __init__(self) -> None:
+        # debug fps
         self.clock = pygame.time.Clock()
 
         # general setup
@@ -112,8 +113,6 @@ class YSortGroup(pygame.sprite.Group):
             self.resize_coeff = self.min_resize_coeff
 
     def custom_draw(self, player) -> None:
-        self.clock.tick()
-
         display_size = self.display_surf.get_size()
 
         # do transparent background for temp surface
@@ -146,4 +145,6 @@ class YSortGroup(pygame.sprite.Group):
             ),
         )
 
+        # debug fps
+        self.clock.tick()
         debug(self.clock.get_fps())
