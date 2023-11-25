@@ -39,10 +39,10 @@ class Level:
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, val in enumerate(row):
-                    x = col_index * TILESIZE
-                    y = row_index * TILESIZE // 4
+                    x = col_index * Config.TILE_SIZE
+                    y = row_index * Config.TILE_SIZE // 4
                     if row_index % 2 == 1:
-                        x += TILESIZE // 2
+                        x += Config.TILE_SIZE // 2
 
                     if style == "mountain_constraints":
                         if val != "-1":

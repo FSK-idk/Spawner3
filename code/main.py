@@ -10,7 +10,9 @@ class Game:
         # general setup
         pygame.init()
 
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((Config.WIDTH, Config.HEIGHT))
+        pygame.mouse.set_visible(False)
+
         pygame.display.set_caption("Spawner3")
         self.clock = pygame.time.Clock()
 
@@ -28,7 +30,7 @@ class Game:
             self.level.run()
 
             pygame.display.update()
-            self.clock.tick(FPS)
+            self.clock.tick(Config.FPS)
 
 
 if __name__ == "__main__":
