@@ -83,10 +83,10 @@ class YSortGroup(pygame.sprite.Group):
         self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
         # coeff to resize temp surface
-        self.resize_coeff = 3
+        self.resize_coeff = 2
         self.resize_step = 0.1
-        self.max_resize_coeff = 4
-        self.min_resize_coeff = 2
+        self.max_resize_coeff = 2
+        self.min_resize_coeff = 1
 
         # creating temp surface with alpha channel to resize level
         self.temp_surface = pygame.surface.Surface(
