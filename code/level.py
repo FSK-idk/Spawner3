@@ -19,22 +19,66 @@ class Level:
         # collision sprites
         self.obstacle_sprites = pygame.sprite.Group()
 
+        # level info
+        self.level_name = "mountain"
+
         # sprite setup
         self.create_map()
 
     def create_map(self) -> None:
-        # import layout and sprites
-        layouts = {
-            "test": import_csv_layout(Config.PROJECT_FOLDER + "/levels/test/test.csv"),
-            "mountain_constraints": import_csv_layout(
-                Config.PROJECT_FOLDER + "/levels/mountain/mountain_constraints.csv"
-            ),
-        }
+        # import level graphics
+        if self.level_name == "mountain":
+            layouts = {
+                "constraints": import_csv_layout(
+                    Config.PROJECT_FOLDER + "/levels/mountain/mountain_constraints.csv"
+                ),
+                "teleports": import_csv_layout(
+                    Config.PROJECT_FOLDER + "/levels/mountain/mountain_teleports.csv"
+                ),
+            }
+            floor = pygame.image.load(
+                Config.PROJECT_FOLDER + "/graphics/background/mountain.png"
+            ).convert_alpha()
+            player_pos = (400, 250)
+
+        elif self.level_name == "cave":
+            layouts = {
+                "constraints": import_csv_layout(
+                    Config.PROJECT_FOLDER + "/levels/cave/cave_constraints.csv"
+                ),
+                "teleports": import_csv_layout(
+                    Config.PROJECT_FOLDER + "/levels/cave/cave_teleports.csv"
+                ),
+            }
+            floor = pygame.image.load(
+                Config.PROJECT_FOLDER + "/graphics/background/cave.png"
+            ).convert_alpha()
+            player_pos = (400, 500)
+
+        elif self.level_name == "cats":
+            layouts = {
+                "constraints": import_csv_layout(
+                    Config.PROJECT_FOLDER + "/levels/cats/cats_constraints.csv"
+                ),
+                "teleports": import_csv_layout(
+                    Config.PROJECT_FOLDER + "/levels/cats/cats_teleports.csv"
+                ),
+            }
+            floor = pygame.image.load(
+                Config.PROJECT_FOLDER + "/graphics/background/cats.png"
+            ).convert_alpha()
+            player_pos = (500, 450)
+
         graphics = {
             "test": import_surfaces(
                 Config.PROJECT_FOLDER + "/graphics/sprites/ground/"
             ),
+            "teleports": import_surfaces(
+                Config.PROJECT_FOLDER + "/graphics/sprites/teleports"
+            ),
         }
+
+        self.visible_sprites.change_floor(floor)
 
         # in each layout add new tiles in our groups
         for style, layout in layouts.items():
@@ -45,20 +89,58 @@ class Level:
                     if row_index % 2 == 1:
                         x += Config.TILE_SIZE // 2
 
-                    if style == "mountain_constraints":
-                        if val != "-1":
+                    if style == "constraints":
+                        if val == "0":
                             # visible for debugging
-                            surf = graphics["test"][0]
+                            surf = graphics["test"][1]
                             Tile(
                                 (x, y),
                                 [self.visible_sprites, self.obstacle_sprites],
-                                "test",
+                                "constraints",
                                 surf,
                             )
 
-        self.player = Player((400, 400), [self.visible_sprites], self.obstacle_sprites)
+                    if style == "teleports":
+                        if val == "0":
+                            # visible for debugging
+                            surf = graphics["teleports"][0]
+                            Tile(
+                                (x, y),
+                                [self.visible_sprites, self.obstacle_sprites],
+                                "teleport_mountain",
+                                surf,
+                            )
+                        if val == "1":
+                            # visible for debugging
+                            surf = graphics["teleports"][1]
+                            Tile(
+                                (x, y),
+                                [self.visible_sprites, self.obstacle_sprites],
+                                "teleport_cave",
+                                surf,
+                            )
+                        if val == "2":
+                            # visible for debugging
+                            surf = graphics["teleports"][2]
+                            Tile(
+                                (x, y),
+                                [self.visible_sprites, self.obstacle_sprites],
+                                "teleport_cats",
+                                surf,
+                            )
+
+        self.player = Player(player_pos, [self.visible_sprites], self.obstacle_sprites)
+
+    def change_level(self):
+        if Config.CURRENT_LEVEL != self.level_name:
+            self.level_name = Config.CURRENT_LEVEL
+            self.visible_sprites.empty()
+            self.obstacle_sprites.empty()
+            self.create_map()
+            self.level_name = Config.CURRENT_LEVEL
 
     def run(self) -> None:
+        self.change_level()
         self.visible_sprites.key_log()
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
@@ -76,12 +158,6 @@ class YSortGroup(pygame.sprite.Group):
         self.half_width = self.display_surf.get_size()[0] // 2
         self.half_height = self.display_surf.get_size()[1] // 2
 
-        # creating the floor
-        self.floor_surf = pygame.image.load(
-            Config.PROJECT_FOLDER + "/graphics/background/mountain.png"
-        ).convert_alpha()
-        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
-
         # coeff to resize temp surface
         self.resize_coeff = 2
         self.resize_step = 0.1
@@ -92,6 +168,12 @@ class YSortGroup(pygame.sprite.Group):
         self.temp_surface = pygame.surface.Surface(
             self.display_surf.get_size(), pygame.SRCALPHA
         )
+
+    # must be called before custom_draw
+    def change_floor(self, floor) -> None:
+        # creating floor
+        self.floor_surf = floor
+        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
     def key_log(self) -> None:
         # check mouse events

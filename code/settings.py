@@ -9,6 +9,7 @@ class Config:
     FPS = 60
     TILE_SIZE = 32
     PROJECT_FOLDER = get_parent_dir()
+    CURRENT_LEVEL = "mountain"
 
 
 class HotKeys:

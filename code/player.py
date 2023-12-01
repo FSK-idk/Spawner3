@@ -109,14 +109,28 @@ class Player(pygame.sprite.Sprite):
 
         # change player position
         self.hitbox.x += self.direction.x * self.speed
+        self.check_collision("change_level")
         self.check_collision("horizontal")
         self.hitbox.y += self.direction.y * self.speed
+        self.check_collision("change_level")
         self.check_collision("vertical")
         self.rect.center = self.hitbox.center
 
-    def check_collision(self, direction) -> None:
-        # move player back
-        if direction == "horizontal":
+    def check_collision(self, type) -> None:
+        if type == "change_level":
+            for sprite in self.obstacle_sprites:
+                if sprite.hitbox.colliderect(self.hitbox):
+                    if sprite.sprite_type == "teleport_mountain":
+                        Config.CURRENT_LEVEL = "mountain"
+                        break
+                    if sprite.sprite_type == "teleport_cave":
+                        Config.CURRENT_LEVEL = "cave"
+                        break
+                    if sprite.sprite_type == "teleport_cats":
+                        Config.CURRENT_LEVEL = "cats"
+                        break
+
+        if type == "horizontal":
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
                     if self.direction.x < 0:  # move left
@@ -124,7 +138,7 @@ class Player(pygame.sprite.Sprite):
                     if self.direction.x > 0:  # move right
                         self.hitbox.right = sprite.rect.left
 
-        if direction == "vertical":
+        if type == "vertical":
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
                     if self.direction.y < 0:  # move up
