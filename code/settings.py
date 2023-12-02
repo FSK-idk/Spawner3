@@ -10,10 +10,13 @@ class Config:
     TILE_SIZE = 32
     PROJECT_FOLDER = get_parent_dir()
     CURRENT_LEVEL = "mountain"
+    TEST_DATA = 12
 
 
 class HotKeys:
     interact = [pygame.K_e]
+
+    test = [pygame.K_p]
 
     pause = [pygame.K_ESCAPE]
 

@@ -14,9 +14,12 @@ class Player(pygame.sprite.Sprite):
             Config.PROJECT_FOLDER
             + "/graphics/sprites/player/idle/right/forward/idle right forward 1.png"
         ).convert_alpha()
-        self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(
-            -Config.TILE_SIZE // 1.5, -Config.TILE_SIZE // 1.5
+        self.rect = self.image.get_rect(midbottom=pos)
+        self.hitbox = pygame.Rect(
+            pos[0] - Config.TILE_SIZE / 6,
+            pos[1] - Config.TILE_SIZE / 2,
+            Config.TILE_SIZE / 3,
+            Config.TILE_SIZE / 2,
         )
 
         # movement
@@ -109,26 +112,24 @@ class Player(pygame.sprite.Sprite):
 
         # change player position
         self.hitbox.x += self.direction.x * self.speed
-        self.check_collision("change_level")
+        self.check_collision("general")
         self.check_collision("horizontal")
         self.hitbox.y += self.direction.y * self.speed
-        self.check_collision("change_level")
+        self.check_collision("general")
         self.check_collision("vertical")
         self.rect.center = self.hitbox.center
 
     def check_collision(self, type) -> None:
-        if type == "change_level":
+        if type == "general":
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
+                    # change level
                     if sprite.sprite_type == "teleport_mountain":
                         Config.CURRENT_LEVEL = "mountain"
-                        break
                     if sprite.sprite_type == "teleport_cave":
                         Config.CURRENT_LEVEL = "cave"
-                        break
                     if sprite.sprite_type == "teleport_cats":
                         Config.CURRENT_LEVEL = "cats"
-                        break
 
         if type == "horizontal":
             for sprite in self.obstacle_sprites:

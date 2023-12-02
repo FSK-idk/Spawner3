@@ -67,12 +67,10 @@ class Level:
             floor = pygame.image.load(
                 Config.PROJECT_FOLDER + "/graphics/background/cats.png"
             ).convert_alpha()
-            player_pos = (500, 450)
+            player_pos = (500, 400)
 
         graphics = {
-            "test": import_surfaces(
-                Config.PROJECT_FOLDER + "/graphics/sprites/ground/"
-            ),
+            "test": import_surfaces(Config.PROJECT_FOLDER + "/graphics/sprites/floor/"),
             "teleports": import_surfaces(
                 Config.PROJECT_FOLDER + "/graphics/sprites/teleports"
             ),
@@ -205,7 +203,11 @@ class YSortGroup(pygame.sprite.Group):
         self.offset.y = player.rect.centery - self.half_height
 
         # draw floor
-        floor_offset_pos = self.floor_rect.topleft - self.offset
+        floor_offset_pos = (
+            self.floor_rect.topleft
+            - self.offset
+            + pygame.Vector2(-Config.TILE_SIZE // 2, -0.25 * Config.TILE_SIZE)
+        )
         self.temp_surface.blit(self.floor_surf, floor_offset_pos)
 
         # draw sprites
@@ -230,3 +232,4 @@ class YSortGroup(pygame.sprite.Group):
         # debug fps
         self.clock.tick()
         debug(self.clock.get_fps())
+        debug(Config.TEST_DATA, 30)
