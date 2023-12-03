@@ -12,6 +12,10 @@ class Config:
 
     CURRENT_LEVEL = "mountain"
     PLAYER_POS = (400, 250)
+
+    WOOD_AMOUNT = 0
+    STONE_AMOUNT = 0
+
     TEST_DATA = 12
 
 

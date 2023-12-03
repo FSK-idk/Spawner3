@@ -133,7 +133,7 @@ class Level:
                     if style == "magic_trees":
                         if val == "0":
                             surf = graphics["magic_trees"][0]
-                            InteractiveTile(
+                            MagicTree(
                                 (x, y),
                                 [self.visible_sprites, self.obstacle_sprites],
                                 "magic_tree",
@@ -150,7 +150,6 @@ class Level:
             self.visible_sprites.empty()
             self.obstacle_sprites.empty()
             self.create_map()
-            self.level_name = config.CURRENT_LEVEL
 
     def run(self) -> None:
         self.change_level()
@@ -175,6 +174,7 @@ class YSortGroup(pygame.sprite.Group):
         self.floor_surf = pygame.image.load(
             config.PROJECT_FOLDER + "/graphics/background/mountain.png"
         ).convert_alpha()
+        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
         # coeff to resize temp surface
         self.resize_coeff = 2
@@ -251,4 +251,6 @@ class YSortGroup(pygame.sprite.Group):
         # debug
         self.clock.tick()
         debug(self.clock.get_fps())
+        debug(f"WOOD: {config.WOOD_AMOUNT}", 30)
+        debug(f"STONE: {config.STONE_AMOUNT}", 50)
         debug(config.TEST_DATA, 320, 600)
