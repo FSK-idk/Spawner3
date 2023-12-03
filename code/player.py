@@ -123,6 +123,7 @@ class Player(pygame.sprite.Sprite):
     def check_collision(self, type) -> None:
         if type == "general":
             for sprite in self.obstacle_sprites:
+                # teleport tiles
                 if isinstance(sprite, TeleportTile) and sprite.hitbox.colliderect(
                     self.hitbox
                 ):

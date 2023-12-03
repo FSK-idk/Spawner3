@@ -35,10 +35,6 @@ class Game:
             if pygame.event.get(pygame.QUIT):
                 # dump save
                 with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
-                    config.PLAYER_POS = (
-                        self.level.player.hitbox.x,
-                        self.level.player.hitbox.y,
-                    )
                     pickle.dump(config, f)
 
                 pygame.quit()
