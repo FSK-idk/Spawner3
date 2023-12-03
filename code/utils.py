@@ -4,10 +4,9 @@ import pygame
 from csv import reader
 from os import walk
 from os.path import dirname, abspath
-from collections import defaultdict
 
 
-def import_csv_layout(path):
+def import_csv_layout(path) -> list:
     layout = []
 
     with open(path) as level_layout:
@@ -18,7 +17,7 @@ def import_csv_layout(path):
     return layout
 
 
-def import_layouts(level_name, layers):
+def import_layouts(level_name, layers) -> dict:
     layouts = {}
 
     for layer in layers:
@@ -29,7 +28,7 @@ def import_layouts(level_name, layers):
     return layouts
 
 
-def import_surfaces(path):
+def import_surfaces(path) -> list:
     surf_list = []
 
     for _, __, image_files in walk(path):
@@ -41,5 +40,5 @@ def import_surfaces(path):
     return surf_list
 
 
-def get_parent_dir(path=__file__):
+def get_parent_dir(path=__file__) -> str:
     return dirname(dirname(abspath(path)))

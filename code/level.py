@@ -14,20 +14,17 @@ class Level:
         self.display_surface = pygame.display.get_surface()
 
         # sprite groups
-        # visible sprites
         self.visible_sprites = YSortGroup()
-        # collision sprites
         self.obstacle_sprites = pygame.sprite.Group()
 
         # level info
         self.name = "mountain"
 
-        # sprite setup
+        # map setup
         self.create_map()
 
     def create_map(self) -> None:
         # import level graphics
-
         match self.name:
             case "mountain":
                 layouts = import_layouts(
@@ -74,7 +71,7 @@ class Level:
                     match layer:
                         case "constraints":
                             if val == "0":
-                                # visible for debugging
+                                # add self.visible_sprites group for debugging
                                 surf = graphics["test"][1]
                                 Tile(
                                     (x, y),
@@ -223,4 +220,3 @@ class YSortGroup(pygame.sprite.Group):
         debug(f"Wood: {config.WOOD_AMOUNT}", 30)
         debug(f"Stone: {config.STONE_AMOUNT}", 50)
         debug(f"Interact: {HotKeys.is_pressed(HotKeys.interact)}", 70)
-        debug(config.TEST_DATA, 320, 600)

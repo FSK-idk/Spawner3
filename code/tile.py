@@ -66,8 +66,6 @@ class InteractiveTile(Tile):
         self.interact_area = self.hitbox.inflate(5, 5)
 
     def interact(self) -> None:
-        # debug
-        config.TEST_DATA += 1
         pass
 
 
