@@ -123,14 +123,10 @@ class Player(pygame.sprite.Sprite):
     def check_collision(self, type) -> None:
         if type == "general":
             for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    # change level
-                    if sprite.sprite_type == "teleport_mountain":
-                        config.CURRENT_LEVEL = "mountain"
-                    if sprite.sprite_type == "teleport_cave":
-                        config.CURRENT_LEVEL = "cave"
-                    if sprite.sprite_type == "teleport_cats":
-                        config.CURRENT_LEVEL = "cats"
+                if isinstance(sprite, TeleportTile) and sprite.hitbox.colliderect(
+                    self.hitbox
+                ):
+                    sprite.teleport()
 
                 # interactive tiles
                 if (

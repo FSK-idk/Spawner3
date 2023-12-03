@@ -26,6 +26,31 @@ class Tile(pygame.sprite.Sprite):
         )
 
 
+class TeleportTile(Tile):
+    def __init__(
+        self,
+        pos,
+        groups,
+        sprite_type,
+        surface=pygame.Surface((config.TILE_SIZE, config.TILE_SIZE)),
+    ) -> None:
+        super().__init__(pos, groups, sprite_type, surface)
+
+    def teleport(self):
+        if self.sprite_type == "teleport_mountain":
+            if config.CURRENT_LEVEL == "cave":
+                config.PLAYER_POS = (400, 150)
+            if config.CURRENT_LEVEL == "cats":
+                config.PLAYER_POS = (500, 325)
+            config.CURRENT_LEVEL = "mountain"
+        if self.sprite_type == "teleport_cave":
+            config.CURRENT_LEVEL = "cave"
+            config.PLAYER_POS = (350, 550)
+        if self.sprite_type == "teleport_cats":
+            config.CURRENT_LEVEL = "cats"
+            config.PLAYER_POS = (500, 450)
+
+
 class InteractiveTile(Tile):
     def __init__(
         self,

@@ -13,7 +13,9 @@ class Game:
         # load save
         try:
             with open(config.PROJECT_FOLDER + "/data/config.txt", "rb") as f:
-                conf = pickle.load(f)
+                conf: Config = pickle.load(f)
+                config.CURRENT_LEVEL = conf.CURRENT_LEVEL
+                config.PLAYER_POS = conf.PLAYER_POS
                 config.TEST_DATA = conf.TEST_DATA
         except:
             with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
@@ -33,6 +35,10 @@ class Game:
             if pygame.event.get(pygame.QUIT):
                 # dump save
                 with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
+                    config.PLAYER_POS = (
+                        self.level.player.hitbox.x,
+                        self.level.player.hitbox.y,
+                    )
                     pickle.dump(config, f)
 
                 pygame.quit()
