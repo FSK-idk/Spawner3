@@ -4,7 +4,7 @@
   <export target="../cave/cave.csv" format="csv"/>
  </editorsettings>
  <tileset firstgid="1" source="../tilesets/Test.tsx"/>
- <tileset firstgid="120" source="floor.tsx"/>
+ <tileset firstgid="120" source="../tilesets/floor.tsx"/>
  <layer id="8" name="floor" width="30" height="100">
   <data encoding="csv">
 60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,116,116,116,116,116,116,116,116,116,116,116,116,

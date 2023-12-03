@@ -16,8 +16,6 @@ class Config:
 class HotKeys:
     interact = [pygame.K_e]
 
-    test = [pygame.K_p]
-
     pause = [pygame.K_ESCAPE]
 
     go_right = [pygame.K_RIGHT, pygame.K_d]
@@ -29,3 +27,6 @@ class HotKeys:
     def is_pressed(codes: list[int]) -> bool:
         keys = pygame.key.get_pressed()
         return any(map(lambda key: keys[key], codes))
+
+
+config = Config()

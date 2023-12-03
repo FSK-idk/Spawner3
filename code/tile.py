@@ -10,7 +10,7 @@ class Tile(pygame.sprite.Sprite):
         pos,
         groups,
         sprite_type,
-        surface=pygame.Surface((Config.TILE_SIZE, Config.TILE_SIZE)),
+        surface=pygame.Surface((config.TILE_SIZE, config.TILE_SIZE)),
     ) -> None:
         # general setup
         super().__init__(groups)
@@ -20,22 +20,23 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=pos)
         self.hitbox = pygame.Rect(
             pos[0] - self.image.get_size()[0] / 2,
-            pos[1] - Config.TILE_SIZE / 2,
+            pos[1] - config.TILE_SIZE / 2,
             self.image.get_size()[0],
-            Config.TILE_SIZE / 2,
+            config.TILE_SIZE / 2,
         )
-        # self.hitbox = self.rect.inflate(0, -self.image.get_size()[1] // 4)
 
 
-class MagicTree(Tile):
+class InteractiveTile(Tile):
     def __init__(
         self,
         pos,
         groups,
         sprite_type,
-        surface=pygame.Surface((Config.TILE_SIZE, Config.TILE_SIZE)),
+        surface=pygame.Surface((config.TILE_SIZE, config.TILE_SIZE)),
     ) -> None:
         super().__init__(pos, groups, sprite_type, surface)
 
-    def interact(self):
-        Config.TEST_DATA += 1
+        self.interact_area = self.hitbox.inflate(5, 5)
+
+    def interact(self) -> None:
+        config.TEST_DATA += 1

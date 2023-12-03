@@ -4,6 +4,7 @@ import pygame
 from settings import *
 from utils import *
 from collections import defaultdict
+from tile import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -11,15 +12,15 @@ class Player(pygame.sprite.Sprite):
         # general setup
         super().__init__(groups)
         self.image = pygame.image.load(
-            Config.PROJECT_FOLDER
+            config.PROJECT_FOLDER
             + "/graphics/sprites/player/idle/right/forward/idle right forward 1.png"
         ).convert_alpha()
         self.rect = self.image.get_rect(midbottom=pos)
         self.hitbox = pygame.Rect(
-            pos[0] - Config.TILE_SIZE / 6,
-            pos[1] - Config.TILE_SIZE / 2,
-            Config.TILE_SIZE / 3,
-            Config.TILE_SIZE / 2,
+            pos[0] - config.TILE_SIZE / 6,
+            pos[1] - config.TILE_SIZE / 2,
+            config.TILE_SIZE / 3,
+            config.TILE_SIZE / 2,
         )
 
         # movement
@@ -48,7 +49,7 @@ class Player(pygame.sprite.Sprite):
             for x_dir in ["right", "left"]:
                 for y_dir in ["forward", "back"]:
                     self.animation_images[act][x_dir][y_dir] = import_surfaces(
-                        Config.PROJECT_FOLDER
+                        config.PROJECT_FOLDER
                         + f"/graphics/sprites/player/{act}/{x_dir}/{y_dir}"
                     )
 
@@ -96,7 +97,7 @@ class Player(pygame.sprite.Sprite):
         animations = self.animation_images[act][x_dir][y_dir]
 
         # change frame index
-        self.frame_index += self.frame_rate / Config.FPS
+        self.frame_index += self.frame_rate / config.FPS
         if self.frame_index >= len(animations):
             self.frame_index = 0
 
@@ -125,11 +126,19 @@ class Player(pygame.sprite.Sprite):
                 if sprite.hitbox.colliderect(self.hitbox):
                     # change level
                     if sprite.sprite_type == "teleport_mountain":
-                        Config.CURRENT_LEVEL = "mountain"
+                        config.CURRENT_LEVEL = "mountain"
                     if sprite.sprite_type == "teleport_cave":
-                        Config.CURRENT_LEVEL = "cave"
+                        config.CURRENT_LEVEL = "cave"
                     if sprite.sprite_type == "teleport_cats":
-                        Config.CURRENT_LEVEL = "cats"
+                        config.CURRENT_LEVEL = "cats"
+
+                # interactive tiles
+                if (
+                    isinstance(sprite, InteractiveTile)
+                    and HotKeys.is_pressed(HotKeys.interact)
+                    and sprite.interact_area.colliderect(self.hitbox)
+                ):
+                    sprite.interact()
 
         if type == "horizontal":
             for sprite in self.obstacle_sprites:

@@ -1,6 +1,6 @@
 # game start
 
-import pygame, sys
+import pygame, sys, pickle
 from settings import *
 from level import *
 
@@ -10,7 +10,16 @@ class Game:
         # general setup
         pygame.init()
 
-        self.screen = pygame.display.set_mode((Config.WIDTH, Config.HEIGHT))
+        # load save
+        try:
+            with open(config.PROJECT_FOLDER + "/data/config.txt", "rb") as f:
+                conf = pickle.load(f)
+                config.TEST_DATA = conf.TEST_DATA
+        except:
+            with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
+                pickle.dump(config, f)
+
+        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
         # pygame.mouse.set_visible(False)
 
         pygame.display.set_caption("Spawner3")
@@ -22,6 +31,10 @@ class Game:
         # game loop
         while True:
             if pygame.event.get(pygame.QUIT):
+                # dump save
+                with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
+                    pickle.dump(config, f)
+
                 pygame.quit()
                 sys.exit()
 
@@ -30,7 +43,7 @@ class Game:
             self.level.run()
 
             pygame.display.update()
-            self.clock.tick(Config.FPS)
+            self.clock.tick(config.FPS)
 
 
 if __name__ == "__main__":

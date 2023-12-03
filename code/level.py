@@ -30,49 +30,55 @@ class Level:
         if self.level_name == "mountain":
             layouts = {
                 "constraints": import_csv_layout(
-                    Config.PROJECT_FOLDER + "/levels/mountain/mountain_constraints.csv"
+                    config.PROJECT_FOLDER + "/levels/mountain/mountain_constraints.csv"
                 ),
                 "teleports": import_csv_layout(
-                    Config.PROJECT_FOLDER + "/levels/mountain/mountain_teleports.csv"
+                    config.PROJECT_FOLDER + "/levels/mountain/mountain_teleports.csv"
+                ),
+                "magic_trees": import_csv_layout(
+                    config.PROJECT_FOLDER + "/levels/mountain/mountain_magic_trees.csv"
                 ),
             }
             floor = pygame.image.load(
-                Config.PROJECT_FOLDER + "/graphics/background/mountain.png"
+                config.PROJECT_FOLDER + "/graphics/background/mountain.png"
             ).convert_alpha()
             player_pos = (400, 250)
 
         elif self.level_name == "cave":
             layouts = {
                 "constraints": import_csv_layout(
-                    Config.PROJECT_FOLDER + "/levels/cave/cave_constraints.csv"
+                    config.PROJECT_FOLDER + "/levels/cave/cave_constraints.csv"
                 ),
                 "teleports": import_csv_layout(
-                    Config.PROJECT_FOLDER + "/levels/cave/cave_teleports.csv"
+                    config.PROJECT_FOLDER + "/levels/cave/cave_teleports.csv"
                 ),
             }
             floor = pygame.image.load(
-                Config.PROJECT_FOLDER + "/graphics/background/cave.png"
+                config.PROJECT_FOLDER + "/graphics/background/cave.png"
             ).convert_alpha()
             player_pos = (400, 500)
 
         elif self.level_name == "cats":
             layouts = {
                 "constraints": import_csv_layout(
-                    Config.PROJECT_FOLDER + "/levels/cats/cats_constraints.csv"
+                    config.PROJECT_FOLDER + "/levels/cats/cats_constraints.csv"
                 ),
                 "teleports": import_csv_layout(
-                    Config.PROJECT_FOLDER + "/levels/cats/cats_teleports.csv"
+                    config.PROJECT_FOLDER + "/levels/cats/cats_teleports.csv"
                 ),
             }
             floor = pygame.image.load(
-                Config.PROJECT_FOLDER + "/graphics/background/cats.png"
+                config.PROJECT_FOLDER + "/graphics/background/cats.png"
             ).convert_alpha()
             player_pos = (500, 400)
 
         graphics = {
-            "test": import_surfaces(Config.PROJECT_FOLDER + "/graphics/sprites/floor/"),
+            "test": import_surfaces(config.PROJECT_FOLDER + "/graphics/sprites/floor/"),
             "teleports": import_surfaces(
-                Config.PROJECT_FOLDER + "/graphics/sprites/teleports"
+                config.PROJECT_FOLDER + "/graphics/sprites/teleports"
+            ),
+            "magic_trees": import_surfaces(
+                config.PROJECT_FOLDER + "/graphics/sprites/objects/magic trees/"
             ),
         }
 
@@ -82,10 +88,10 @@ class Level:
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, val in enumerate(row):
-                    x = col_index * Config.TILE_SIZE
-                    y = row_index * Config.TILE_SIZE // 4
+                    x = col_index * config.TILE_SIZE
+                    y = row_index * config.TILE_SIZE // 4
                     if row_index % 2 == 1:
-                        x += Config.TILE_SIZE // 2
+                        x += config.TILE_SIZE // 2
 
                     if style == "constraints":
                         if val == "0":
@@ -127,15 +133,25 @@ class Level:
                                 surf,
                             )
 
+                    if style == "magic_trees":
+                        if val == "0":
+                            surf = graphics["magic_trees"][0]
+                            InteractiveTile(
+                                (x, y),
+                                [self.visible_sprites, self.obstacle_sprites],
+                                "magic_tree",
+                                surf,
+                            )
+
         self.player = Player(player_pos, [self.visible_sprites], self.obstacle_sprites)
 
     def change_level(self):
-        if Config.CURRENT_LEVEL != self.level_name:
-            self.level_name = Config.CURRENT_LEVEL
+        if config.CURRENT_LEVEL != self.level_name:
+            self.level_name = config.CURRENT_LEVEL
             self.visible_sprites.empty()
             self.obstacle_sprites.empty()
             self.create_map()
-            self.level_name = Config.CURRENT_LEVEL
+            self.level_name = config.CURRENT_LEVEL
 
     def run(self) -> None:
         self.change_level()
@@ -206,12 +222,12 @@ class YSortGroup(pygame.sprite.Group):
         floor_offset_pos = (
             self.floor_rect.topleft
             - self.offset
-            + pygame.Vector2(-Config.TILE_SIZE // 2, -0.25 * Config.TILE_SIZE)
+            + pygame.Vector2(-config.TILE_SIZE // 2, -0.25 * config.TILE_SIZE)
         )
         self.temp_surface.blit(self.floor_surf, floor_offset_pos)
 
         # draw sprites
-        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.bottom):
             offset_pos = sprite.rect.topleft - self.offset
             self.temp_surface.blit(sprite.image, offset_pos)
 
@@ -229,7 +245,7 @@ class YSortGroup(pygame.sprite.Group):
             ),
         )
 
-        # debug fps
+        # debug
         self.clock.tick()
         debug(self.clock.get_fps())
-        debug(Config.TEST_DATA, 30)
+        debug(config.TEST_DATA, 320, 600)
