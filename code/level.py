@@ -20,54 +20,34 @@ class Level:
         self.obstacle_sprites = pygame.sprite.Group()
 
         # level info
-        self.level_name = "mountain"
+        self.name = "mountain"
 
         # sprite setup
         self.create_map()
 
     def create_map(self) -> None:
         # import level graphics
-        if self.level_name == "mountain":
-            layouts = {
-                "constraints": import_csv_layout(
-                    config.PROJECT_FOLDER + "/levels/mountain/mountain_constraints.csv"
-                ),
-                "teleports": import_csv_layout(
-                    config.PROJECT_FOLDER + "/levels/mountain/mountain_teleports.csv"
-                ),
-                "magic_trees": import_csv_layout(
-                    config.PROJECT_FOLDER + "/levels/mountain/mountain_magic_trees.csv"
-                ),
-            }
-            floor = pygame.image.load(
-                config.PROJECT_FOLDER + "/graphics/background/mountain.png"
-            ).convert_alpha()
 
-        elif self.level_name == "cave":
-            layouts = {
-                "constraints": import_csv_layout(
-                    config.PROJECT_FOLDER + "/levels/cave/cave_constraints.csv"
-                ),
-                "teleports": import_csv_layout(
-                    config.PROJECT_FOLDER + "/levels/cave/cave_teleports.csv"
-                ),
-            }
-            floor = pygame.image.load(
-                config.PROJECT_FOLDER + "/graphics/background/cave.png"
-            ).convert_alpha()
+        match self.name:
+            case "mountain":
+                layouts = import_layouts(
+                    "mountain", ["constraints", "teleports", "magic_trees"]
+                )
+                floor = pygame.image.load(
+                    config.PROJECT_FOLDER + "/graphics/background/mountain.png"
+                ).convert_alpha()
 
-        elif self.level_name == "cats":
-            layouts = {
-                "constraints": import_csv_layout(
-                    config.PROJECT_FOLDER + "/levels/cats/cats_constraints.csv"
-                ),
-                "teleports": import_csv_layout(
-                    config.PROJECT_FOLDER + "/levels/cats/cats_teleports.csv"
-                ),
-            }
-            floor = pygame.image.load(
-                config.PROJECT_FOLDER + "/graphics/background/cats.png"
-            ).convert_alpha()
+            case "cave":
+                layouts = import_layouts("cave", ["constraints", "teleports"])
+                floor = pygame.image.load(
+                    config.PROJECT_FOLDER + "/graphics/background/cave.png"
+                ).convert_alpha()
+
+            case "cats":
+                layouts = import_layouts("cats", ["constraints", "teleports"])
+                floor = pygame.image.load(
+                    config.PROJECT_FOLDER + "/graphics/background/cats.png"
+                ).convert_alpha()
 
         graphics = {
             "test": import_surfaces(config.PROJECT_FOLDER + "/graphics/sprites/floor/"),
@@ -82,71 +62,60 @@ class Level:
         self.visible_sprites.set_floor(floor)
 
         # in each layout add new tiles in our groups
-        for style, layout in layouts.items():
+        for layer, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, val in enumerate(row):
+                    # set position
                     x = col_index * config.TILE_SIZE
                     y = row_index * config.TILE_SIZE // 4
                     if row_index % 2 == 1:
                         x += config.TILE_SIZE // 2
 
-                    if style == "constraints":
-                        if val == "0":
-                            # visible for debugging
-                            surf = graphics["test"][1]
-                            Tile(
-                                (x, y),
-                                [self.visible_sprites, self.obstacle_sprites],
-                                "constraints",
-                                surf,
-                            )
+                    match layer:
+                        case "constraints":
+                            if val == "0":
+                                # visible for debugging
+                                surf = graphics["test"][1]
+                                Tile(
+                                    (x, y),
+                                    [self.obstacle_sprites],
+                                    "constraints",
+                                    surf,
+                                )
 
-                    if style == "teleports":
-                        if val == "0":
-                            # visible for debugging
-                            surf = graphics["teleports"][0]
-                            TeleportTile(
-                                (x, y),
-                                [self.visible_sprites, self.obstacle_sprites],
+                        case "teleports":
+                            sprite_type = [
                                 "teleport_mountain",
-                                surf,
-                            )
-                        if val == "1":
-                            # visible for debugging
-                            surf = graphics["teleports"][1]
-                            TeleportTile(
-                                (x, y),
-                                [self.visible_sprites, self.obstacle_sprites],
                                 "teleport_cave",
-                                surf,
-                            )
-                        if val == "2":
-                            # visible for debugging
-                            surf = graphics["teleports"][2]
-                            TeleportTile(
-                                (x, y),
-                                [self.visible_sprites, self.obstacle_sprites],
                                 "teleport_cats",
-                                surf,
-                            )
+                            ]
+                            if val != "-1":
+                                # visible for debugging
+                                surf = graphics["teleports"][int(val)]
+                                TeleportTile(
+                                    (x, y),
+                                    [self.visible_sprites, self.obstacle_sprites],
+                                    sprite_type[int(val)],
+                                    surf,
+                                )
 
-                    if style == "magic_trees":
-                        if val == "0":
-                            surf = graphics["magic_trees"][0]
-                            MagicTree(
-                                (x, y),
-                                [self.visible_sprites, self.obstacle_sprites],
-                                "magic_tree",
-                                surf,
-                            )
+                        case "magic_trees":
+                            if val == "0":
+                                surf = graphics["magic_trees"][0]
+                                MagicTree(
+                                    (x, y),
+                                    [self.visible_sprites, self.obstacle_sprites],
+                                    "magic_tree",
+                                    surf,
+                                )
 
         self.player = Player(
             config.PLAYER_POS, [self.visible_sprites], self.obstacle_sprites
         )
 
     def change_level(self):
-        if config.CURRENT_LEVEL != self.level_name:
-            self.level_name = config.CURRENT_LEVEL
+        if config.CURRENT_LEVEL != self.name:
+            self.name = config.CURRENT_LEVEL
             self.visible_sprites.empty()
             self.obstacle_sprites.empty()
             self.create_map()
@@ -251,6 +220,7 @@ class YSortGroup(pygame.sprite.Group):
         # debug
         self.clock.tick()
         debug(self.clock.get_fps())
-        debug(f"WOOD: {config.WOOD_AMOUNT}", 30)
-        debug(f"STONE: {config.STONE_AMOUNT}", 50)
+        debug(f"Wood: {config.WOOD_AMOUNT}", 30)
+        debug(f"Stone: {config.STONE_AMOUNT}", 50)
+        debug(f"Interact: {HotKeys.is_pressed(HotKeys.interact)}", 70)
         debug(config.TEST_DATA, 320, 600)

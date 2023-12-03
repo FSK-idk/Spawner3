@@ -4,6 +4,7 @@ import pygame
 from csv import reader
 from os import walk
 from os.path import dirname, abspath
+from collections import defaultdict
 
 
 def import_csv_layout(path):
@@ -15,6 +16,17 @@ def import_csv_layout(path):
             layout.append(list(row))
 
     return layout
+
+
+def import_layouts(level_name, layers):
+    layouts = {}
+
+    for layer in layers:
+        layouts[layer] = import_csv_layout(
+            get_parent_dir() + f"/levels/{level_name}/{level_name}_{layer}.csv"
+        )
+
+    return layouts
 
 
 def import_surfaces(path):
