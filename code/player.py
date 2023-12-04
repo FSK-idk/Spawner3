@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):
         # general setup
         super().__init__(groups)
         self.image = pygame.image.load(
-            "./graphics/test_tileset/tile_040.png"
+            "../graphics/test_tileset/tile_040.png"
         ).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, -TILESIZE // 2)

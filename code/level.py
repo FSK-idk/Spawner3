@@ -23,9 +23,9 @@ class Level:
 
     def create_map(self):
         # import layout and tileset
-        layouts = {"test": import_csv_layout("./levels/test/test.csv")}
+        layouts = {"test": import_csv_layout("../levels/test/test.csv")}
         graphics = {
-            "test": import_surfaces("./graphics/test_tileset"),
+            "test": import_surfaces("../graphics/test_tileset"),
         }
 
         # in each layout add new tiles in our groups
