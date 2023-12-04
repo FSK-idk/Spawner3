@@ -3,7 +3,7 @@
 import pygame, sys, pickle
 from settings import *
 from level import *
-
+from menu import *
 
 class Game:
     def __init__(self) -> None:
@@ -44,7 +44,10 @@ class Game:
             self.screen.fill("Light Blue")
 
             self.level.run()
-
+            if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+                flag = True
+            if flag:
+                flag = Menu.show(self.screen)
             pygame.display.update()
             self.clock.tick(config.FPS)
 
@@ -52,3 +55,4 @@ class Game:
 if __name__ == "__main__":
     game = Game()
     game.run()
+
