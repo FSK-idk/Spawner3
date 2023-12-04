@@ -47,9 +47,11 @@ class Level:
                 ).convert_alpha()
 
         graphics = {
-            "test": import_surfaces(config.PROJECT_FOLDER + "/graphics/sprites/floor/"),
+            "test": import_surfaces(
+                config.PROJECT_FOLDER + "/graphics/sprites/floor/mountain_floor/"
+            ),
             "teleports": import_surfaces(
-                config.PROJECT_FOLDER + "/graphics/sprites/teleports"
+                config.PROJECT_FOLDER + "/graphics/sprites/teleports/"
             ),
             "magic_trees": import_surfaces(
                 config.PROJECT_FOLDER + "/graphics/sprites/objects/magic trees/"
