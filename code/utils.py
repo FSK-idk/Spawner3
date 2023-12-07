@@ -6,6 +6,7 @@ from os import walk
 from os.path import dirname, abspath
 
 
+# path to csv file
 def import_csv_layout(path) -> list:
     layout = []
 
@@ -17,6 +18,7 @@ def import_csv_layout(path) -> list:
     return layout
 
 
+# better import
 def import_layouts(level_name, layers) -> dict:
     layouts = {}
 
@@ -28,6 +30,7 @@ def import_layouts(level_name, layers) -> dict:
     return layouts
 
 
+# path to the folder containing sprites
 def import_surfaces(path) -> list:
     surf_list = []
 
@@ -38,6 +41,27 @@ def import_surfaces(path) -> list:
             surf_list.append(image_surf)
 
     return surf_list
+
+
+# path to the sprite
+def import_surface(path):
+    surf = pygame.image.load(path).convert_alpha()
+    return surf
+
+
+# path to the folder with the mask, mask file name without extension
+def import_mask(path, name):
+    full_path = path + name + ".png"
+    mask = pygame.mask.from_surface(pygame.image.load(full_path).convert_alpha())
+    return mask
+
+
+# path to the folder with the ysort
+def import_ysort(path):
+    full_path = path + "ysort.png"
+    ysort = pygame.image.load(full_path).convert_alpha().get_rect()
+
+    return ysort
 
 
 def get_parent_dir(path=__file__) -> str:

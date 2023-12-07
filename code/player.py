@@ -9,26 +9,26 @@ from tile import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacle_sprites) -> None:
-        # general setup
         super().__init__(groups)
-        self.image = pygame.image.load(
-            config.PROJECT_FOLDER
-            + "/graphics/sprites/player/idle/right/forward/idle right forward 1.png"
-        ).convert_alpha()
-        self.rect = self.image.get_rect(midbottom=pos)
-        self.hitbox = pygame.Rect(
-            pos[0] - config.TILE_SIZE / 6,
-            pos[1] - config.TILE_SIZE / 2,
-            config.TILE_SIZE / 3,
-            config.TILE_SIZE / 2,
-        )
+        self.player_folder = config.PROJECT_FOLDER + "/graphics/sprites/player/"
 
-        # movement
-        self.direction = pygame.math.Vector2()
-        self.speed = 4
+        # graphics
+        self.image = import_surface(
+            self.player_folder + "animation/idle/right/forward/idle right forward 1.png"
+        )
+        self.rect = self.image.get_rect(midbottom=pos)
+
+        # YSortGroup info
+        self.ysort = import_ysort(self.player_folder)
+        self.ysort.midtop = self.rect.midtop
 
         # collision
         self.obstacle_sprites = obstacle_sprites
+        self.mask = import_mask(self.player_folder, "mask")
+
+        # movement
+        self.direction = pygame.math.Vector2()
+        self.speed = 3.425  # ! do not change. rounding
 
         # animation
         self.frame_rate = 6
@@ -49,8 +49,7 @@ class Player(pygame.sprite.Sprite):
             for x_dir in ["right", "left"]:
                 for y_dir in ["forward", "back"]:
                     self.animation_images[act][x_dir][y_dir] = import_surfaces(
-                        config.PROJECT_FOLDER
-                        + f"/graphics/sprites/player/{act}/{x_dir}/{y_dir}"
+                        self.player_folder + "animation/" + f"{act}/{x_dir}/{y_dir}"
                     )
 
     def input(self) -> None:
@@ -103,55 +102,54 @@ class Player(pygame.sprite.Sprite):
 
         # set image
         self.image = animations[int(self.frame_index)]
-        self.rect = self.image.get_rect(center=self.hitbox.center)
 
     def move(self) -> None:
         # normalize vector by ellipse
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
-            self.direction.y /= 2
+            self.direction.y /= 2  # isometry
 
         # change player position
-        self.hitbox.x += self.direction.x * self.speed
+        self.rect.x += self.direction.x * self.speed
         self.check_collision("general")
         self.check_collision("horizontal")
-        self.hitbox.y += self.direction.y * self.speed
+        self.rect.y += self.direction.y * self.speed
         self.check_collision("general")
         self.check_collision("vertical")
-        self.rect.center = self.hitbox.center
+        self.ysort.midtop = self.rect.midtop
 
     def check_collision(self, type) -> None:
         if type == "general":
             for sprite in self.obstacle_sprites:
-                # teleport tiles
-                if isinstance(sprite, TeleportTile) and sprite.hitbox.colliderect(
-                    self.hitbox
+                if isinstance(sprite, TeleportTile) and pygame.sprite.collide_mask(
+                    sprite, self
                 ):
                     sprite.teleport()
 
-                # interactive tiles
-                if (
-                    isinstance(sprite, InteractiveTile)
-                    and HotKeys.is_pressed(HotKeys.interact)
-                    and sprite.interact_area.colliderect(self.hitbox)
+                if isinstance(sprite, InteractiveTile) and HotKeys.is_pressed(
+                    HotKeys.interact
                 ):
-                    sprite.interact()
+                    # check collision with mask functions
+                    xoffset = self.rect[0] - sprite.rect[0]
+                    yoffset = self.rect[1] - sprite.rect[1]
+                    if sprite.interact_mask.overlap(self.mask, (xoffset, yoffset)):
+                        sprite.interact()
 
         if type == "horizontal":
             for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
+                if pygame.sprite.collide_mask(sprite, self):
                     if self.direction.x < 0:  # move left
-                        self.hitbox.left = sprite.hitbox.right
+                        self.rect.left -= self.direction.x * self.speed
                     if self.direction.x > 0:  # move right
-                        self.hitbox.right = sprite.rect.left
+                        self.rect.right -= self.direction.x * self.speed
 
         if type == "vertical":
             for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
+                if pygame.sprite.collide_mask(sprite, self):
                     if self.direction.y < 0:  # move up
-                        self.hitbox.top = sprite.hitbox.bottom
+                        self.rect.top -= self.direction.y * self.speed
                     if self.direction.y > 0:  # move down
-                        self.hitbox.bottom = sprite.hitbox.top
+                        self.rect.bottom -= self.direction.y * self.speed
 
     def update(self) -> None:
         self.input()

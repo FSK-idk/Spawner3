@@ -30,34 +30,16 @@ class Level:
                 layouts = import_layouts(
                     "mountain", ["constraints", "teleports", "magic_trees"]
                 )
-                floor = pygame.image.load(
-                    config.PROJECT_FOLDER + "/graphics/background/mountain.png"
-                ).convert_alpha()
-
             case "cave":
                 layouts = import_layouts("cave", ["constraints", "teleports"])
-                floor = pygame.image.load(
-                    config.PROJECT_FOLDER + "/graphics/background/cave.png"
-                ).convert_alpha()
 
             case "cats":
                 layouts = import_layouts("cats", ["constraints", "teleports"])
-                floor = pygame.image.load(
-                    config.PROJECT_FOLDER + "/graphics/background/cats.png"
-                ).convert_alpha()
 
-        graphics = {
-            "test": import_surfaces(
-                config.PROJECT_FOLDER + "/graphics/sprites/floor/mountain_floor/"
-            ),
-            "teleports": import_surfaces(
-                config.PROJECT_FOLDER + "/graphics/sprites/teleports/"
-            ),
-            "magic_trees": import_surfaces(
-                config.PROJECT_FOLDER + "/graphics/sprites/objects/magic trees/"
-            ),
-        }
-
+        # set floor
+        floor = pygame.image.load(
+            config.PROJECT_FOLDER + f"/graphics/background_images/{self.name}.png"
+        ).convert_alpha()
         self.visible_sprites.set_floor(floor)
 
         # in each layout add new tiles in our groups
@@ -74,38 +56,43 @@ class Level:
                         case "constraints":
                             if val == "0":
                                 # add self.visible_sprites group for debugging
-                                surf = graphics["test"][1]
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + "/graphics/sprites/teleports/0_mountain/"
+                                )
                                 Tile(
                                     (x, y),
-                                    [self.obstacle_sprites],
+                                    [self.visible_sprites, self.obstacle_sprites],
                                     "constraints",
-                                    surf,
+                                    path,
                                 )
 
                         case "teleports":
-                            sprite_type = [
-                                "teleport_mountain",
-                                "teleport_cave",
-                                "teleport_cats",
-                            ]
+                            sprite_type = ["mountain", "cave", "cats"]
                             if val != "-1":
                                 # visible for debugging
-                                surf = graphics["teleports"][int(val)]
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + f"/graphics/sprites/teleports/{int(val)}_{sprite_type[int(val)]}/"
+                                )
                                 TeleportTile(
                                     (x, y),
                                     [self.visible_sprites, self.obstacle_sprites],
-                                    sprite_type[int(val)],
-                                    surf,
+                                    "teleport_" + sprite_type[int(val)],
+                                    path,
                                 )
 
                         case "magic_trees":
                             if val == "0":
-                                surf = graphics["magic_trees"][0]
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + "/graphics/sprites/objects/magic_trees/0_magic_tree/"
+                                )
                                 MagicTree(
                                     (x, y),
                                     [self.visible_sprites, self.obstacle_sprites],
                                     "magic_tree",
-                                    surf,
+                                    path,
                                 )
 
         self.player = Player(
@@ -140,7 +127,7 @@ class YSortGroup(pygame.sprite.Group):
 
         # floor
         self.floor_surf = pygame.image.load(
-            config.PROJECT_FOLDER + "/graphics/background/mountain.png"
+            config.PROJECT_FOLDER + "/graphics/background_images/mountain.png"
         ).convert_alpha()
         self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
@@ -193,12 +180,12 @@ class YSortGroup(pygame.sprite.Group):
         floor_offset_pos = (
             self.floor_rect.topleft
             - self.offset
-            + pygame.Vector2(-config.TILE_SIZE // 2, -0.25 * config.TILE_SIZE)
+            - pygame.Vector2(config.TILE_SIZE // 2, 0.5 * config.TILE_SIZE)
         )
         self.temp_surface.blit(self.floor_surf, floor_offset_pos)
 
         # draw sprites
-        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.bottom):
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.ysort.bottom):
             offset_pos = sprite.rect.topleft - self.offset
             self.temp_surface.blit(sprite.image, offset_pos)
 

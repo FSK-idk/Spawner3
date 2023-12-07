@@ -5,37 +5,27 @@ from settings import *
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(
-        self,
-        pos,
-        groups,
-        sprite_type,
-        surface=pygame.Surface((config.TILE_SIZE, config.TILE_SIZE)),
-    ) -> None:
-        # general setup
+    def __init__(self, pos, groups, sprite_type, path) -> None:
         super().__init__(groups)
         self.sprite_type = sprite_type
+        self.tile_path = path
 
         # graphics
-        self.image = surface
+        self.surfaces = import_surfaces(path + "animation/")
+        self.image = self.surfaces[0]
         self.rect = self.image.get_rect(midbottom=pos)
-        self.hitbox = pygame.Rect(
-            pos[0] - self.image.get_size()[0] / 2,
-            pos[1] - config.TILE_SIZE / 2,
-            self.image.get_size()[0],
-            config.TILE_SIZE / 2,
-        )
+
+        # YSortGroup info
+        self.ysort = import_ysort(path)
+        self.ysort.midtop = self.rect.midtop
+
+        # collision
+        self.mask = import_mask(path, "mask")
 
 
 class TeleportTile(Tile):
-    def __init__(
-        self,
-        pos,
-        groups,
-        sprite_type,
-        surface=pygame.Surface((config.TILE_SIZE, config.TILE_SIZE)),
-    ) -> None:
-        super().__init__(pos, groups, sprite_type, surface)
+    def __init__(self, pos, groups, sprite_type, path) -> None:
+        super().__init__(pos, groups, sprite_type, path)
 
     def teleport(self):
         # change level name and player position
@@ -54,31 +44,18 @@ class TeleportTile(Tile):
 
 
 class InteractiveTile(Tile):
-    def __init__(
-        self,
-        pos,
-        groups,
-        sprite_type,
-        surface=pygame.Surface((config.TILE_SIZE, config.TILE_SIZE)),
-    ) -> None:
-        super().__init__(pos, groups, sprite_type, surface)
+    def __init__(self, pos, groups, sprite_type, path) -> None:
+        super().__init__(pos, groups, sprite_type, path)
 
-        self.interact_area = self.hitbox.inflate(5, 5)
+        self.interact_mask = import_mask(self.tile_path, "interact_mask")
 
     def interact(self) -> None:
         pass
 
 
 class MagicTree(InteractiveTile):
-    def __init__(
-        self,
-        pos,
-        groups,
-        sprite_type,
-        surface=pygame.Surface((config.TILE_SIZE, config.TILE_SIZE)),
-    ) -> None:
-        super().__init__(pos, groups, sprite_type, surface)
-
+    def __init__(self, pos, groups, sprite_type, path) -> None:
+        super().__init__(pos, groups, sprite_type, path)
         self.gain = 1
 
         # cooldown
@@ -87,8 +64,6 @@ class MagicTree(InteractiveTile):
         self.picking_up = False
 
     def interact(self) -> None:
-        super().interact()
-
         # check cooldown
         current_time = pygame.time.get_ticks()
 
