@@ -74,3 +74,26 @@ class MagicTree(InteractiveTile):
 
         if self.picking_up and current_time - self.pickup_time >= self.cooldown:
             self.picking_up = False
+
+
+class MagicRock(InteractiveTile):
+    def __init__(self, pos, groups, sprite_type, path) -> None:
+        super().__init__(pos, groups, sprite_type, path)
+        self.gain = 1
+
+        # cooldown
+        self.cooldown = 1000
+        self.pickup_time = 0
+        self.picking_up = False
+
+    def interact(self) -> None:
+        # check cooldown
+        current_time = pygame.time.get_ticks()
+
+        if not self.picking_up:
+            self.picking_up = True
+            self.pickup_time = pygame.time.get_ticks()
+            config.STONE_AMOUNT += self.gain
+
+        if self.picking_up and current_time - self.pickup_time >= self.cooldown:
+            self.picking_up = False

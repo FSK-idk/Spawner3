@@ -31,7 +31,9 @@ class Level:
                     "mountain", ["constraints", "teleports", "magic_trees"]
                 )
             case "cave":
-                layouts = import_layouts("cave", ["constraints", "teleports"])
+                layouts = import_layouts(
+                    "cave", ["constraints", "teleports", "magic_rocks"]
+                )
 
             case "cats":
                 layouts = import_layouts("cats", ["constraints", "teleports"])
@@ -92,6 +94,18 @@ class Level:
                                     (x, y),
                                     [self.visible_sprites, self.obstacle_sprites],
                                     "magic_tree",
+                                    path,
+                                )
+                        case "magic_rocks":
+                            if val == "0":
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + "/graphics/sprites/objects/magic_rocks/0_magic_rock/"
+                                )
+                                MagicRock(
+                                    (x, y),
+                                    [self.visible_sprites, self.obstacle_sprites],
+                                    "magic_rock",
                                     path,
                                 )
 
