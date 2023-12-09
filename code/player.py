@@ -5,6 +5,7 @@ from settings import *
 from utils import *
 from collections import defaultdict
 from tile import *
+from npc import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -126,7 +127,7 @@ class Player(pygame.sprite.Sprite):
                 ):
                     sprite.teleport()
 
-                if isinstance(sprite, InteractiveTile) and HotKeys.is_pressed(
+                if (isinstance(sprite, InteractiveTile)) and HotKeys.is_pressed(
                     HotKeys.interact
                 ):
                     # check collision with mask functions
@@ -134,6 +135,15 @@ class Player(pygame.sprite.Sprite):
                     yoffset = self.rect[1] - sprite.rect[1]
                     if sprite.interact_mask.overlap(self.mask, (xoffset, yoffset)):
                         sprite.interact()
+
+                if isinstance(sprite, NPC):
+                    # check collision with mask functions
+                    xoffset = self.rect[0] - sprite.rect[0]
+                    yoffset = self.rect[1] - sprite.rect[1]
+                    if sprite.interact_mask.overlap(self.mask, (xoffset, yoffset)):
+                        sprite.interact(True)
+                    else:
+                        sprite.interact(False)
 
         if type == "horizontal":
             for sprite in self.obstacle_sprites:

@@ -5,6 +5,7 @@ from settings import *
 from utils import *
 from tile import *
 from player import *
+from npc import *
 from debug import debug
 
 
@@ -28,7 +29,7 @@ class Level:
         match self.name:
             case "mountain":
                 layouts = import_layouts(
-                    "mountain", ["constraints", "teleports", "magic_trees"]
+                    "mountain", ["constraints", "teleports", "magic_trees", "npcs"]
                 )
             case "cave":
                 layouts = import_layouts(
@@ -65,7 +66,6 @@ class Level:
                                 Tile(
                                     (x, y),
                                     [self.visible_sprites, self.obstacle_sprites],
-                                    "constraints",
                                     path,
                                 )
 
@@ -80,8 +80,8 @@ class Level:
                                 TeleportTile(
                                     (x, y),
                                     [self.visible_sprites, self.obstacle_sprites],
-                                    "teleport_" + sprite_type[int(val)],
                                     path,
+                                    "teleport_" + sprite_type[int(val)],
                                 )
 
                         case "magic_trees":
@@ -93,7 +93,6 @@ class Level:
                                 MagicTree(
                                     (x, y),
                                     [self.visible_sprites, self.obstacle_sprites],
-                                    "magic_tree",
                                     path,
                                 )
                         case "magic_rocks":
@@ -105,7 +104,19 @@ class Level:
                                 MagicRock(
                                     (x, y),
                                     [self.visible_sprites, self.obstacle_sprites],
-                                    "magic_rock",
+                                    path,
+                                )
+
+                        case "npcs":
+                            if val == "1":
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + "/graphics/sprites/npcs/1_woodcutter/"
+                                )
+                                NPC(
+                                    [self.visible_sprites, self.obstacle_sprites],
+                                    [self.visible_sprites],
+                                    (x, y),
                                     path,
                                 )
 
