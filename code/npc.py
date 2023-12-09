@@ -5,9 +5,10 @@ from settings import *
 
 
 class NPC(pygame.sprite.Sprite):
-    def __init__(self, npc_groups, bubble_gruops, pos, path) -> None:
+    def __init__(self, npc_groups, bubble_gruops, path, pos, type) -> None:
         super().__init__(npc_groups)
         self.npc_folder = path
+        self.npc_type = type
 
         # graphics
         self.surfaces = import_surfaces(self.npc_folder + "animation/")
@@ -26,13 +27,39 @@ class NPC(pygame.sprite.Sprite):
         self.bubble_groups = bubble_gruops
         self.bubble_showing = False
 
-    def interact(self, flag):
+        # cooldown
+        self.cooldown = 2000
+        self.buying_time = 0
+        self.buying = False
+
+    def show_bubble(self, flag):
         if self.bubble_showing == False and flag == True:
-            self.bubble = Bubble(self.bubble_groups, self.rect.midtop, "woodcutter")
+            self.bubble = Bubble(self.bubble_groups, self.rect.midtop, self.npc_type)
             self.bubble_showing = True
         elif self.bubble_showing == True and flag == False:
             self.bubble.kill()
             self.bubble_showing = False
+
+    def interact(self):
+        # check cooldown
+        current_time = pygame.time.get_ticks()
+
+        if not self.buying:
+            self.buying = True
+            self.buying_time = pygame.time.get_ticks()
+
+            # buying
+            if self.npc_type == "woodcutter" and config.TREE_LEVEL < 3:
+                wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
+                if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
+                    config.WOOD_AMOUNT -= wood
+                    config.STONE_AMOUNT -= stone
+                    config.TREE_LEVEL += 1
+                    self.show_bubble(False)
+                    self.show_bubble(True)
+
+        if self.buying and current_time - self.buying_time >= self.cooldown:
+            self.buying = False
 
 
 class Bubble(pygame.sprite.Sprite):
@@ -50,7 +77,12 @@ class Bubble(pygame.sprite.Sprite):
 
         font = pygame.font.Font(config.PROJECT_FOLDER + "/graphics/font/mago2.ttf", 16)
 
-        wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
+        if self.bubble_type == "mesenev":
+            wood, stone = GameData.CATS_UPGRADE[config.CATS_LEVEL]
+        elif self.bubble_type == "woodcutter":
+            wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
+        elif self.bubble_type == "miner":
+            wood, stone = GameData.MINER_UPGRADE[config.ROCK_LEVEL]
 
         wood_surf = import_surface(
             config.PROJECT_FOLDER + "/graphics/gui/icons/wood.png"

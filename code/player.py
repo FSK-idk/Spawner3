@@ -141,9 +141,11 @@ class Player(pygame.sprite.Sprite):
                     xoffset = self.rect[0] - sprite.rect[0]
                     yoffset = self.rect[1] - sprite.rect[1]
                     if sprite.interact_mask.overlap(self.mask, (xoffset, yoffset)):
-                        sprite.interact(True)
+                        sprite.show_bubble(True)
+                        if HotKeys.is_pressed(HotKeys.interact):
+                            sprite.interact()
                     else:
-                        sprite.interact(False)
+                        sprite.show_bubble(False)
 
         if type == "horizontal":
             for sprite in self.obstacle_sprites:

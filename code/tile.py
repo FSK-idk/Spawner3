@@ -92,10 +92,7 @@ class MagicTree(InteractiveTile):
 
     def update(self):
         if self.level != config.TREE_LEVEL:
-            if config.TREE_LEVEL > 3:
-                config.TREE_LEVEL = 3
-            else:
-                self.level_up()
+            self.level_up()
 
 
 class MagicRock(InteractiveTile):

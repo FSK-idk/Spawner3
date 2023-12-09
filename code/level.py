@@ -108,16 +108,18 @@ class Level:
                                 )
 
                         case "npcs":
-                            if val == "1":
+                            sprite_type = ["mesenev", "woodcutter", "miner"]
+                            if val != "-1":
                                 path = (
                                     config.PROJECT_FOLDER
-                                    + "/graphics/sprites/npcs/1_woodcutter/"
+                                    + f"/graphics/sprites/npcs/{int(val)}_{sprite_type[int(val)]}/"
                                 )
                                 NPC(
                                     [self.visible_sprites, self.obstacle_sprites],
                                     [self.visible_sprites],
-                                    (x, y),
                                     path,
+                                    (x, y),
+                                    sprite_type[int(val)],
                                 )
 
         self.player = Player(
