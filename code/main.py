@@ -1,6 +1,8 @@
 # game start
 
-import pygame, sys, pickle
+import pygame
+import sys
+import pickle
 from settings import *
 from level import *
 
