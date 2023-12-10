@@ -16,6 +16,8 @@ class Player(pygame.sprite.Sprite):
         self.image = import_surface(
             self.player_folder + "animation/idle/right/forward/idle right forward 1.png"
         )
+        self.root_image = self.image
+
         self.rect = self.image.get_rect(midbottom=pos)
 
         # YSortGroup info
@@ -49,6 +51,16 @@ class Player(pygame.sprite.Sprite):
             for x_dir in ["right", "left"]:
                 for y_dir in ["forward", "back"]:
                     self.animation_images[act][x_dir][y_dir] = import_surfaces(
+                        self.player_folder + "animation/" + f"{act}/{x_dir}/{y_dir}"
+                    )
+        self.root_animation_images = defaultdict(
+            lambda: defaultdict(lambda: defaultdict(list))
+        )
+
+        for act in ["run", "idle"]:
+            for x_dir in ["right", "left"]:
+                for y_dir in ["forward", "back"]:
+                    self.root_animation_images[act][x_dir][y_dir] = import_surfaces(
                         self.player_folder + "animation/" + f"{act}/{x_dir}/{y_dir}"
                     )
 
@@ -122,12 +134,12 @@ class Player(pygame.sprite.Sprite):
         if type == "general":
             for sprite in self.obstacle_sprites:
                 if isinstance(sprite, TeleportTile) and pygame.sprite.collide_mask(
-                    sprite, self
+                        sprite, self
                 ):
                     sprite.teleport()
 
                 if isinstance(sprite, InteractiveTile) and HotKeys.is_pressed(
-                    HotKeys.interact
+                        HotKeys.interact
                 ):
                     # check collision with mask functions
                     xoffset = self.rect[0] - sprite.rect[0]
