@@ -5,6 +5,7 @@ from settings import *
 from utils import *
 from collections import defaultdict
 from tile import *
+from menu import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -69,19 +70,20 @@ class Player(pygame.sprite.Sprite):
         self.change_animation_state()
 
     def change_direction(self) -> None:
-        if HotKeys.is_pressed(HotKeys.go_left):
-            self.direction.x = -1
-        elif HotKeys.is_pressed(HotKeys.go_right):
-            self.direction.x = 1
-        else:
-            self.direction.x = 0
+        if not Menu.pause_menu_active:
+            if HotKeys.is_pressed(HotKeys.go_left):
+                self.direction.x = -1
+            elif HotKeys.is_pressed(HotKeys.go_right):
+                self.direction.x = 1
+            else:
+                self.direction.x = 0
 
-        if HotKeys.is_pressed(HotKeys.go_up):
-            self.direction.y = -1
-        elif HotKeys.is_pressed(HotKeys.go_down):
-            self.direction.y = 1
-        else:
-            self.direction.y = 0
+            if HotKeys.is_pressed(HotKeys.go_up):
+                self.direction.y = -1
+            elif HotKeys.is_pressed(HotKeys.go_down):
+                self.direction.y = 1
+            else:
+                self.direction.y = 0
 
     def change_animation_state(self) -> None:
         if self.direction.x or self.direction.y:
