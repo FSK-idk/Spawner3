@@ -1,6 +1,8 @@
 # game start
 
-import pygame, sys, pickle
+import pygame
+import sys
+import pickle
 from settings import *
 from level import *
 from menu import *
@@ -40,23 +42,22 @@ class Game:
 
                 pygame.quit()
                 sys.exit()
-
-            if Menu.start_menu_active:
+            if Menu.start_menu_active and not Menu.settings_active:
                 Menu.start_menu_active = Menu.start_menu(self.screen)
+            elif Menu.settings_active:
+                Menu.settings(self.screen)
             else:
                 self.screen.fill("Light Blue")
-
                 self.level.run()
-                if pygame.key.get_pressed()[pygame.K_ESCAPE]:
-                    Config.FLAG = True
-                if Config.FLAG:
-                    Config.FLAG = Menu.show(self.screen)
+                if HotKeys.is_pressed(HotKeys.pause):
+                    Menu.pause_menu_active = True
+                if Menu.pause_menu_active:
+                    Menu.pause_menu_active = Menu.pause_menu(self.screen)
+
                 pygame.display.update()
                 self.clock.tick(config.FPS)
-
 
 
 if __name__ == "__main__":
     game = Game()
     game.run()
-
