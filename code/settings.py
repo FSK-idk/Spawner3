@@ -17,7 +17,16 @@ class Config:
     WOOD_AMOUNT = 0
     STONE_AMOUNT = 0
 
-    TEST_DATA = 12
+    TREE_LEVEL = 0
+    ROCK_LEVEL = 0
+    CATS_LEVEL = 0
+
+
+class GameData:
+    # wood - stone
+    WOODCUTTER_UPGRADE = [(20, 0), (50, 100), (400, 800)]
+    MINER_UPGRADE = [(20, 0), (50, 100), (400, 800)]
+    CATS_UPGRADE = [(20, 0), (50, 100), (400, 800)]
 
 
 class HotKeys:

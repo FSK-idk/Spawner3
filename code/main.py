@@ -18,8 +18,10 @@ class Game:
                 conf: Config = pickle.load(f)
                 config.CURRENT_LEVEL = conf.CURRENT_LEVEL
                 config.PLAYER_POS = conf.PLAYER_POS
-                config.WOOD_AMOUNT = conf.WOOD_AMOUNT
-                config.STONE_AMOUNT = conf.STONE_AMOUNT
+                config.WOOD_AMOUNT = 500  # conf.WOOD_AMOUNT
+                config.STONE_AMOUNT = 500  # conf.STONE_AMOUNT
+                config.TREE_LEVEL = 0  # conf.TREE_LEVEL
+                config.ROCK_LEVEL = 0  # conf.ROCK_LEVEL
         except:
             with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
                 pickle.dump(config, f)
