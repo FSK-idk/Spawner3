@@ -31,11 +31,12 @@ class Level:
         match self.name:
             case "mountain":
                 layouts = import_layouts(
-                    "mountain", ["constraints", "teleports", "magic_trees", "npcs"]
+                    "mountain",
+                    ["constraints", "teleports", "magic_trees", "npcs", "trees"],
                 )
             case "cave":
                 layouts = import_layouts(
-                    "cave", ["constraints", "teleports", "magic_rocks", "npcs"]
+                    "cave", ["constraints", "teleports", "magic_rocks", "npcs", "rocks"]
                 )
 
             case "cats":
@@ -102,6 +103,35 @@ class Level:
                                         path,
                                         (x, y),
                                     )
+                        case "trees":
+                            if val != "-1":
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + f"/graphics/sprites/background/trees/{int(val)}_tree/"
+                                )
+                                Tile(
+                                    [
+                                        self.all_sprites,
+                                        self.visible_sprites,
+                                    ],
+                                    path,
+                                    (x, y),
+                                )
+
+                        case "rocks":
+                            if val != "-1":
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + f"/graphics/sprites/background/rocks/{int(val)}_rock/"
+                                )
+                                Tile(
+                                    [
+                                        self.all_sprites,
+                                        self.visible_sprites,
+                                    ],
+                                    path,
+                                    (x, y),
+                                )
 
                         case "teleports":
                             sprite_type = ["mountain", "cave", "cats"]
