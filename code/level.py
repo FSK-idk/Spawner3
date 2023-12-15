@@ -16,7 +16,6 @@ class Level:
         self.display_surface = pygame.display.get_surface()
 
         # sprite groups
-        self.background_sprites = pygame.sprite.Group()
         self.visible_sprites = YSortGroup()
         self.obstacle_sprites = pygame.sprite.Group()
         self.all_sprites = AllSprites()
@@ -44,13 +43,9 @@ class Level:
 
         # set floor
         self.background = Background(
-            [self.all_sprites, self.background_sprites],
+            [self.all_sprites],
             config.PROJECT_FOLDER + f"/graphics/background_images/{self.name}.png",
         )
-        # floor = pygame.image.load(
-        #     config.PROJECT_FOLDER + f"/graphics/background_images/{self.name}.png"
-        # ).convert_alpha()
-        # self.visible_sprites.set_floor(floor)
 
         # in each layout add new tiles in our groups
         for layer, layout in layouts.items():
@@ -191,7 +186,6 @@ class Level:
             self.all_sprites.empty()
             self.visible_sprites.empty()
             self.obstacle_sprites.empty()
-            self.background_sprites.empty()
             self.create_map()
 
     def run(self) -> None:
@@ -212,17 +206,6 @@ class YSortGroup(pygame.sprite.Group):
         self.offset = pygame.math.Vector2()
         self.half_width = self.display_surf.get_size()[0] // 2
         self.half_height = self.display_surf.get_size()[1] // 2
-
-        # floor
-        # self.floor_surf = pygame.image.load(
-        #     config.PROJECT_FOLDER + "/graphics/background_images/mountain.png"
-        # ).convert_alpha()
-        # self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
-
-    # def set_floor(self, floor) -> None:
-    #     # creating floor
-    #     self.floor_surf = floor
-    #     self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
     def custom_draw(self, player, background) -> None:
         # get offset
