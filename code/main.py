@@ -5,6 +5,7 @@ import sys
 import pickle
 from settings import *
 from level import *
+from menu import *
 
 
 class Game:
@@ -27,7 +28,6 @@ class Game:
                 pickle.dump(config, f)
 
         self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
-        # pygame.mouse.set_visible(False)
 
         pygame.display.set_caption("Spawner3")
         self.clock = pygame.time.Clock()
@@ -45,12 +45,20 @@ class Game:
                 pygame.quit()
                 sys.exit()
 
-            self.screen.fill("Light Blue")
+            if Menu.start_menu_active and not Menu.settings_active:
+                Menu.start_menu_active = Menu.start_menu(self.screen)
+            elif Menu.settings_active:
+                Menu.settings(self.screen)
+            else:
+                self.screen.fill("Light Blue")
+                self.level.run()
+                if HotKeys.is_pressed(HotKeys.pause):
+                    Menu.pause_menu_active = True
+                if Menu.pause_menu_active:
+                    Menu.pause_menu_active = Menu.pause_menu(self.screen)
 
-            self.level.run()
-
-            pygame.display.update()
-            self.clock.tick(config.FPS)
+                pygame.display.update()
+                self.clock.tick(config.FPS)
 
 
 if __name__ == "__main__":
