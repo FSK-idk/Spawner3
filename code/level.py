@@ -39,7 +39,7 @@ class Level:
                 )
 
             case "cats":
-                layouts = import_layouts("cats", ["constraints", "teleports"])
+                layouts = import_layouts("cats", ["constraints", "teleports", "npcs"])
 
         # set floor
         self.background = Background(
