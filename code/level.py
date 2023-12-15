@@ -1,12 +1,12 @@
 # level class where everything happens
 
 import pygame
-from settings import *
-from utils import *
-from tile import *
 from background import *
-from player import *
 from npc import *
+from player import *
+from settings import *
+from tile import *
+from utils import *
 from debug import debug
 
 

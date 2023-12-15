@@ -1,11 +1,11 @@
 # game start
 
+import pickle
 import pygame
 import sys
-import pickle
-from settings import *
 from level import *
 from menu import *
+from settings import *
 
 
 class Game:
@@ -17,12 +17,16 @@ class Game:
         try:
             with open(config.PROJECT_FOLDER + "/data/config.txt", "rb") as f:
                 conf: Config = pickle.load(f)
+
                 config.CURRENT_LEVEL = conf.CURRENT_LEVEL
                 config.PLAYER_POS = conf.PLAYER_POS
+
                 config.WOOD_AMOUNT = 500  # conf.WOOD_AMOUNT
                 config.STONE_AMOUNT = 500  # conf.STONE_AMOUNT
-                config.TREE_LEVEL = 0  # conf.TREE_LEVEL
+
+                config.TREE_LEVEL = 1  # conf.TREE_LEVEL
                 config.ROCK_LEVEL = 0  # conf.ROCK_LEVEL
+                config.CATS_LEVEL = 0  # conf.CATS_LEVEL
         except:
             with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
                 pickle.dump(config, f)

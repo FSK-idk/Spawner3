@@ -1,12 +1,12 @@
 # player class
 
 import pygame
+from menu import *
+from npc import *
 from settings import *
+from tile import *
 from utils import *
 from collections import defaultdict
-from tile import *
-from npc import *
-from menu import *
 
 
 class Player(pygame.sprite.Sprite):
