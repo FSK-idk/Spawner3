@@ -33,7 +33,7 @@ class Level:
                 )
             case "cave":
                 layouts = import_layouts(
-                    "cave", ["constraints", "teleports", "magic_rocks"]
+                    "cave", ["constraints", "teleports", "magic_rocks", "npcs"]
                 )
 
             case "cats":
@@ -57,17 +57,41 @@ class Level:
 
                     match layer:
                         case "constraints":
-                            if val == "0":
-                                # add self.visible_sprites group for debugging
-                                path = (
-                                    config.PROJECT_FOLDER
-                                    + "/graphics/sprites/teleports/0_mountain/"
-                                )
-                                Tile(
-                                    (x, y),
-                                    [self.visible_sprites, self.obstacle_sprites],
-                                    path,
-                                )
+                            if val != "-1":
+                                if (
+                                    val == "-1"
+                                    or (val == "4" and self.name == "mountain")
+                                    or (val == "3" and self.name == "cave")
+                                    or (val == "1" and self.name == "cats")
+                                ):
+                                    path = (
+                                        config.PROJECT_FOLDER
+                                        + "/graphics/sprites/background/trees/0_tree/"
+                                    )
+                                    Tile((x, y), [self.obstacle_sprites], path)
+
+                                else:
+                                    if self.name == "mountain":
+                                        path = (
+                                            config.PROJECT_FOLDER
+                                            + f"/graphics/sprites/background/trees/{int(val)}_tree/"
+                                        )
+                                    elif self.name == "cave":
+                                        path = (
+                                            config.PROJECT_FOLDER
+                                            + f"/graphics/sprites/background/rocks/{int(val)}_rock/"
+                                        )
+                                    else:
+                                        path = (
+                                            config.PROJECT_FOLDER
+                                            + "/graphics/sprites/background/walls/0_wall/"
+                                        )
+
+                                    Tile(
+                                        (x, y),
+                                        [self.visible_sprites, self.obstacle_sprites],
+                                        path,
+                                    )
 
                         case "teleports":
                             sprite_type = ["mountain", "cave", "cats"]
