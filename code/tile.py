@@ -5,7 +5,7 @@ from settings import *
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, path) -> None:
+    def __init__(self, groups, path, pos) -> None:
         super().__init__(groups)
         self.tile_folder = path
         self.position = pos
@@ -30,8 +30,9 @@ class Tile(pygame.sprite.Sprite):
 
 
 class TeleportTile(Tile):
-    def __init__(self, *args) -> None:
-        super().__init__(*args)
+    def __init__(self, groups, path, pos, sprite_type) -> None:
+        super().__init__(groups, path, pos)
+        self.sprite_type = sprite_type
 
     def teleport(self):
         # change level name and player position
@@ -50,8 +51,8 @@ class TeleportTile(Tile):
 
 
 class InteractiveTile(Tile):
-    def __init__(self, pos, groups, path) -> None:
-        super().__init__(pos, groups, path)
+    def __init__(self, groups, path, pos) -> None:
+        super().__init__(groups, path, pos)
 
         self.interact_mask = import_mask(self.tile_folder, "interact_mask")
 
@@ -60,8 +61,8 @@ class InteractiveTile(Tile):
 
 
 class MagicTree(InteractiveTile):
-    def __init__(self, pos, groups, path) -> None:
-        super().__init__(pos, groups, path)
+    def __init__(self, groups, path, pos) -> None:
+        super().__init__(groups, path, pos)
         self.gain = 1
         self.level = config.TREE_LEVEL
 
@@ -98,8 +99,8 @@ class MagicTree(InteractiveTile):
 
 
 class MagicRock(InteractiveTile):
-    def __init__(self, pos, groups, path) -> None:
-        super().__init__(pos, groups, path)
+    def __init__(self, groups, path, pos) -> None:
+        super().__init__(groups, path, pos)
         self.gain = 1
 
         # cooldown

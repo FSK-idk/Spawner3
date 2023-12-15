@@ -12,7 +12,10 @@ class NPC(pygame.sprite.Sprite):
 
         # graphics
         self.surfaces = import_surfaces(self.npc_folder + "animation/")
-        self.image = self.surfaces[0]
+
+        self.root_image = self.surfaces[0]
+        self.image = self.root_image
+
         self.rect = self.image.get_rect(midbottom=pos)
 
         # YSortGroup info
@@ -71,8 +74,13 @@ class Bubble(pygame.sprite.Sprite):
 
         # graphics
         self.surfaces = import_surfaces(self.bubble_folder)
-        self.image = self.surfaces[0]
+
+        self.root_image = self.surfaces[0]
+        self.image = self.root_image
+
         self.rect = self.image.get_rect(midbottom=self.position)
+
+        # YSortGroup info
         self.ysort = self.rect
 
         font = pygame.font.Font(config.PROJECT_FOLDER + "/graphics/font/mago2.ttf", 16)
