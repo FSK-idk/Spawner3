@@ -15,7 +15,10 @@ class Tile(pygame.sprite.Sprite):
     def init(self):
         # graphics
         self.surfaces = import_surfaces(self.tile_folder + "animation/")
-        self.image = self.surfaces[0]
+
+        self.root_image = self.surfaces[0]
+        self.image = self.root_image
+
         self.rect = self.image.get_rect(midbottom=self.position)
 
         # YSortGroup info
@@ -27,9 +30,8 @@ class Tile(pygame.sprite.Sprite):
 
 
 class TeleportTile(Tile):
-    def __init__(self, pos, groups, path, sprite_type) -> None:
-        super().__init__(pos, groups, path)
-        self.sprite_type = sprite_type
+    def __init__(self, *args) -> None:
+        super().__init__(*args)
 
     def teleport(self):
         # change level name and player position

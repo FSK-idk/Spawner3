@@ -17,6 +17,7 @@ class Level:
         # sprite groups
         self.visible_sprites = YSortGroup()
         self.obstacle_sprites = pygame.sprite.Group()
+        self.all_sprites = AllSprites()
 
         # level info
         self.name = "mountain"
@@ -68,7 +69,11 @@ class Level:
                                         config.PROJECT_FOLDER
                                         + "/graphics/sprites/background/trees/0_tree/"
                                     )
-                                    Tile((x, y), [self.obstacle_sprites], path)
+                                    Tile(
+                                        (x, y),
+                                        [self.all_sprites, self.obstacle_sprites],
+                                        path,
+                                    )
 
                                 else:
                                     if self.name == "mountain":
@@ -89,7 +94,11 @@ class Level:
 
                                     Tile(
                                         (x, y),
-                                        [self.visible_sprites, self.obstacle_sprites],
+                                        [
+                                            self.all_sprites,
+                                            self.visible_sprites,
+                                            self.obstacle_sprites,
+                                        ],
                                         path,
                                     )
 
@@ -103,7 +112,11 @@ class Level:
                                 )
                                 TeleportTile(
                                     (x, y),
-                                    [self.visible_sprites, self.obstacle_sprites],
+                                    [
+                                        self.all_sprites,
+                                        self.visible_sprites,
+                                        self.obstacle_sprites,
+                                    ],
                                     path,
                                     "teleport_" + sprite_type[int(val)],
                                 )
@@ -116,7 +129,11 @@ class Level:
                                 )
                                 MagicTree(
                                     (x, y),
-                                    [self.visible_sprites, self.obstacle_sprites],
+                                    [
+                                        self.all_sprites,
+                                        self.visible_sprites,
+                                        self.obstacle_sprites,
+                                    ],
                                     path,
                                 )
                         case "magic_rocks":
@@ -127,7 +144,11 @@ class Level:
                                 )
                                 MagicRock(
                                     (x, y),
-                                    [self.visible_sprites, self.obstacle_sprites],
+                                    [
+                                        self.all_sprites,
+                                        self.visible_sprites,
+                                        self.obstacle_sprites,
+                                    ],
                                     path,
                                 )
 
@@ -147,7 +168,9 @@ class Level:
                                 )
 
         self.player = Player(
-            config.PLAYER_POS, [self.visible_sprites], self.obstacle_sprites
+            config.PLAYER_POS,
+            [self.visible_sprites, self.all_sprites],
+            self.obstacle_sprites,
         )
 
     def change_level(self):
@@ -159,7 +182,7 @@ class Level:
 
     def run(self) -> None:
         self.change_level()
-        self.visible_sprites.key_log()
+        self.all_sprites.run()
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
 
@@ -182,12 +205,6 @@ class YSortGroup(pygame.sprite.Group):
         ).convert_alpha()
         self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
-        # coeff to resize temp surface
-        self.resize_coeff = 2
-        self.resize_step = 0.1
-        self.max_resize_coeff = 2
-        self.min_resize_coeff = 1
-
         # creating temp surface with alpha channel to resize level
         self.temp_surface = pygame.surface.Surface(
             self.display_surf.get_size(), pygame.SRCALPHA
@@ -197,25 +214,6 @@ class YSortGroup(pygame.sprite.Group):
         # creating floor
         self.floor_surf = floor
         self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
-
-    def key_log(self) -> None:
-        # check mouse events
-        mousewheel_event = pygame.event.get(pygame.MOUSEBUTTONUP)
-
-        if not mousewheel_event:
-            return
-
-        if mousewheel_event[0].button == 4:
-            self.resize_coeff += self.resize_step
-
-        elif mousewheel_event[0].button == 5:
-            self.resize_coeff -= self.resize_step
-
-        if self.resize_coeff > self.max_resize_coeff:
-            self.resize_coeff = self.max_resize_coeff
-
-        if self.resize_coeff < self.min_resize_coeff:
-            self.resize_coeff = self.min_resize_coeff
 
     def custom_draw(self, player) -> None:
         display_size = self.display_surf.get_size()
@@ -237,22 +235,16 @@ class YSortGroup(pygame.sprite.Group):
 
         # draw sprites
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.ysort.bottom):
-            offset_pos = sprite.rect.topleft - self.offset
+            offset_pos = (sprite.rect.topleft - self.offset) * AllSprites.resize_coeff
+            offset_pos.x -= self.half_width * AllSprites.resize_coeff - self.half_width
+            offset_pos.y -= (
+                self.half_height * AllSprites.resize_coeff - self.half_height
+            )
             self.temp_surface.blit(sprite.image, offset_pos)
 
         display_size = self.display_surf.get_size()
-        resized_size = (
-            display_size[0] * self.resize_coeff,
-            display_size[1] * self.resize_coeff,
-        )
 
-        self.display_surf.blit(
-            pygame.transform.scale(self.temp_surface, resized_size),
-            (
-                (display_size[0] - resized_size[0]) / 2,
-                (display_size[1] - resized_size[1]) / 2,
-            ),
-        )
+        self.display_surf.blit(self.temp_surface, (0, 0))
 
         # debug
         self.clock.tick()
@@ -260,3 +252,76 @@ class YSortGroup(pygame.sprite.Group):
         debug(f"Wood: {config.WOOD_AMOUNT}", 30)
         debug(f"Stone: {config.STONE_AMOUNT}", 50)
         debug(f"Interact: {HotKeys.is_pressed(HotKeys.interact)}", 70)
+
+
+class AllSprites(pygame.sprite.Group):
+    resize_step = 0.03
+    max_resize_coeff = 2
+    min_resize_coeff = 1
+    resize_coeff = min_resize_coeff
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.sprites_entity = self.sprites().copy()
+
+    def mouse_event_check(self) -> None:
+        # check mouse events
+        mousewheel_event = pygame.event.get(pygame.MOUSEBUTTONUP)
+
+        if not mousewheel_event:
+            return
+
+        if mousewheel_event[0].button == 4:
+            AllSprites.resize_coeff += AllSprites.resize_step
+
+        elif mousewheel_event[0].button == 5:
+            AllSprites.resize_coeff -= AllSprites.resize_step
+
+        if AllSprites.resize_coeff > AllSprites.max_resize_coeff:
+            AllSprites.resize_coeff = AllSprites.max_resize_coeff
+
+        if AllSprites.resize_coeff < AllSprites.min_resize_coeff:
+            AllSprites.resize_coeff = AllSprites.min_resize_coeff
+
+        if mousewheel_event[0].button == 4 or mousewheel_event[0].button == 5:
+            for sprite in self.sprites():
+                if isinstance(sprite, Player):
+                    for act in ["run", "idle"]:
+                        for x_dir in ["right", "left"]:
+                            for y_dir in ["forward", "back"]:
+                                image_list = sprite.root_animation_images[act][x_dir][
+                                    y_dir
+                                ]
+                                for i in range(
+                                    len(sprite.animation_images[act][x_dir][y_dir])
+                                ):
+                                    root_image = image_list[i]
+                                    sprite.animation_images[act][x_dir][y_dir][
+                                        i
+                                    ] = pygame.transform.scale(
+                                        root_image,
+                                        (
+                                            root_image.get_size()[0]
+                                            * AllSprites.resize_coeff,
+                                            root_image.get_size()[1]
+                                            * AllSprites.resize_coeff,
+                                        ),
+                                    )
+                else:
+                    sprite.image = pygame.transform.scale(
+                        sprite.root_image,
+                        (
+                            (sprite.root_image.get_size()[0] * AllSprites.resize_coeff),
+                            (sprite.root_image.get_size()[1] * AllSprites.resize_coeff),
+                        ),
+                    )
+
+                    sprite.rect.width = (
+                        sprite.root_image.get_size()[0] * AllSprites.resize_coeff
+                    )
+                    sprite.rect.height = (
+                        sprite.root_image.get_size()[1] * AllSprites.resize_coeff
+                    )
+
+    def run(self) -> None:
+        self.mouse_event_check()
