@@ -32,7 +32,13 @@ class Level:
             case "mountain":
                 layouts = import_layouts(
                     "mountain",
-                    ["constraints", "teleports", "magic_trees", "npcs", "trees"],
+                    [
+                        "constraints",
+                        "teleports",
+                        "magic_trees",
+                        "npcs",
+                        "trees",
+                    ],
                 )
             case "cave":
                 layouts = import_layouts(
@@ -103,6 +109,7 @@ class Level:
                                         path,
                                         (x, y),
                                     )
+
                         case "trees":
                             if val != "-1":
                                 path = (
@@ -144,7 +151,7 @@ class Level:
                                 TeleportTile(
                                     [
                                         self.all_sprites,
-                                        self.visible_sprites,
+                                        # self.visible_sprites,
                                         self.obstacle_sprites,
                                     ],
                                     path,
@@ -274,9 +281,9 @@ class YSortGroup(pygame.sprite.Group):
 
 
 class AllSprites(pygame.sprite.Group):
-    resize_step = 0.1
+    resize_step = 0.2
     max_resize_coeff = 5
-    min_resize_coeff = 3
+    min_resize_coeff = 3.2
     resize_coeff = min_resize_coeff
 
     def __init__(self) -> None:
