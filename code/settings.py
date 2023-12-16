@@ -22,6 +22,8 @@ class Config:
     ROCK_LEVEL = 0
     CATS_LEVEL = 0
 
+    IS_UPDATE = 0
+
 
 class GameData:
     # wood - stone

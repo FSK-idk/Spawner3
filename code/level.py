@@ -230,6 +230,10 @@ class Level:
         self.all_sprites.run()
         self.visible_sprites.custom_draw(self.player, self.background)
         self.visible_sprites.update()
+        if config.IS_UPDATE == 1:
+            self.all_sprites.update_sprites()
+        if config.IS_UPDATE != 0:
+            config.IS_UPDATE -= 1
 
 
 class YSortGroup(pygame.sprite.Group):

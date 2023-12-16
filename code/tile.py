@@ -102,11 +102,22 @@ class MagicRock(InteractiveTile):
     def __init__(self, groups, path, pos) -> None:
         super().__init__(groups, path, pos)
         self.gain = 1
+        self.level = config.ROCK_LEVEL
 
         # cooldown
         self.cooldown = 1000
         self.pickup_time = 0
         self.picking_up = False
+
+    def level_up(self):
+        self.level = config.ROCK_LEVEL
+
+        self.tile_folder = (
+            config.PROJECT_FOLDER
+            + f"/graphics/sprites/objects/magic_rocks/{self.level}_magic_rock/"
+        )
+
+        self.init()
 
     def interact(self) -> None:
         # check cooldown
@@ -119,3 +130,7 @@ class MagicRock(InteractiveTile):
 
         if self.picking_up and current_time - self.pickup_time >= self.cooldown:
             self.picking_up = False
+
+    def update(self):
+        if self.level != config.ROCK_LEVEL:
+            self.level_up()

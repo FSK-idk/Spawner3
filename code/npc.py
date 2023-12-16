@@ -39,6 +39,7 @@ class NPC(pygame.sprite.Sprite):
         if self.bubble_showing == False and flag == True:
             self.bubble = Bubble(self.bubble_groups, self.rect.midtop, self.npc_type)
             self.bubble_showing = True
+            config.IS_UPDATE = 2
         elif self.bubble_showing == True and flag == False:
             self.bubble.kill()
             self.bubble_showing = False
@@ -60,6 +61,17 @@ class NPC(pygame.sprite.Sprite):
                     config.TREE_LEVEL += 1
                     self.show_bubble(False)
                     self.show_bubble(True)
+                    config.IS_UPDATE = 2
+
+            if self.npc_type == "miner" and config.ROCK_LEVEL < 3:
+                wood, stone = GameData.MINER_UPGRADE[config.ROCK_LEVEL]
+                if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
+                    config.WOOD_AMOUNT -= wood
+                    config.STONE_AMOUNT -= stone
+                    config.ROCK_LEVEL += 1
+                    self.show_bubble(False)
+                    self.show_bubble(True)
+                    config.IS_UPDATE = 2
 
         if self.buying and current_time - self.buying_time >= self.cooldown:
             self.buying = False
