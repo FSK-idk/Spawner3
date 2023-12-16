@@ -65,6 +65,7 @@ class MagicTree(InteractiveTile):
         super().__init__(groups, path, pos)
         self.gain = 1
         self.level = config.TREE_LEVEL
+        self.level_up()
 
         # cooldown
         self.cooldown = 1000
@@ -103,6 +104,7 @@ class MagicRock(InteractiveTile):
         super().__init__(groups, path, pos)
         self.gain = 1
         self.level = config.ROCK_LEVEL
+        self.level_up()
 
         # cooldown
         self.cooldown = 1000

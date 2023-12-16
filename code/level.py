@@ -2,6 +2,7 @@
 
 import pygame
 from background import *
+from hud import *
 from npc import *
 from player import *
 from settings import *
@@ -19,6 +20,9 @@ class Level:
         self.visible_sprites = YSortGroup()
         self.obstacle_sprites = pygame.sprite.Group()
         self.all_sprites = AllSprites()
+
+        self.hud_sprites = pygame.sprite.Group()
+        HUD([self.hud_sprites], self.display_surface)
 
         # level info
         self.name = "mountain"
@@ -230,10 +234,14 @@ class Level:
         self.all_sprites.run()
         self.visible_sprites.custom_draw(self.player, self.background)
         self.visible_sprites.update()
+
         if config.IS_UPDATE == 1:
             self.all_sprites.update_sprites()
         if config.IS_UPDATE != 0:
             config.IS_UPDATE -= 1
+
+        self.hud_sprites.draw(self.display_surface)
+        self.hud_sprites.update()
 
 
 class YSortGroup(pygame.sprite.Group):
@@ -279,9 +287,7 @@ class YSortGroup(pygame.sprite.Group):
         # debug
         self.clock.tick()
         debug(self.clock.get_fps())
-        debug(f"Wood: {config.WOOD_AMOUNT}", 30)
-        debug(f"Stone: {config.STONE_AMOUNT}", 50)
-        debug(f"Interact: {HotKeys.is_pressed(HotKeys.interact)}", 70)
+        debug(f"Interact: {HotKeys.is_pressed(HotKeys.interact)}", 30)
 
 
 class AllSprites(pygame.sprite.Group):
