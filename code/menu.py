@@ -51,12 +51,13 @@ class Menu:
         mouse = pygame.mouse.get_pos()
         pressed = pygame.mouse.get_pressed()
 
-        if button_continue_rect.collidepoint(mouse) and pressed[0]:
-            return False
-        if button_settings_rect.collidepoint(mouse) and pressed[0]:
-            Menu.settings_active = True
-        if button_quit_rect.collidepoint(mouse) and pressed[0]:
-            Menu.start_menu_active = True
+        for event in pygame.event.get():
+            if button_continue_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                return False
+            if button_settings_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                Menu.settings_active = True
+            if button_quit_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                Menu.start_menu_active = True
 
         screen.blit(pause_menu, (0, 0))
 
@@ -99,16 +100,16 @@ class Menu:
         main_menu.blit(button_quit, button_quit_rect)
 
         mouse = pygame.mouse.get_pos()
-        pressed = pygame.mouse.get_pressed()
 
-        if button_play_rect.collidepoint(mouse) and pressed[0]:
-            return False
-        if button_settings_rect.collidepoint(mouse) and pressed[0]:
-            Menu.settings_active = True
-        if button_developers_rect.collidepoint(mouse) and pressed[0]:
-            Menu.developers_menu_active = True
-        if button_quit_rect.collidepoint(mouse) and pressed[0]:
-            sys.exit()
+        for event in pygame.event.get():
+            if button_play_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                return False
+            if button_settings_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                Menu.settings_active = True
+            if button_developers_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                Menu.developers_menu_active = True
+            if button_quit_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                sys.exit()
 
         screen.blit(main_menu, (0, 0))
 
@@ -135,10 +136,10 @@ class Menu:
         Menu.settings_screen.blit(button_quit, button_quit_rect)
 
         mouse = pygame.mouse.get_pos()
-        pressed = pygame.mouse.get_pressed()
 
-        if button_quit_rect.collidepoint(mouse) and pressed[0]:
-            Menu.settings_active = False
+        for event in pygame.event.get():
+            if button_quit_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                Menu.settings_active = False
 
         pygame_widgets.update(pygame.event.get())
 
@@ -218,21 +219,19 @@ class Menu:
         developers_menu.blit(profile4, profile4_rect)
 
         mouse = pygame.mouse.get_pos()
-        pressed = pygame.mouse.get_pressed()
 
-        if button_quit_rect.collidepoint(mouse) and pressed[0]:
-            Menu.developers_menu_active = False
+        for event in pygame.event.get():
+            if button_quit_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                Menu.developers_menu_active = False
 
-        if profile1_rect.collidepoint(mouse):
-
-            if pressed[0]:
+            if profile1_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
                 webbrowser.open_new('https://github.com/Fotlex')
-        if profile2_rect.collidepoint(mouse) and pressed[0]:
-            webbrowser.open_new('https://github.com/FSK-idk')
-        if profile3_rect.collidepoint(mouse) and pressed[0]:
-            webbrowser.open_new('https://github.com/verhovv')
-        if profile4_rect.collidepoint(mouse) and pressed[0]:
-            webbrowser.open_new('https://github.com/dmitry416')
+            if profile2_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                webbrowser.open_new('https://github.com/FSK-idk')
+            if profile3_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                webbrowser.open_new('https://github.com/verhovv')
+            if profile4_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
+                webbrowser.open_new('https://github.com/dmitry416')
 
         screen.blit(developers_menu, (0, 0))
 
