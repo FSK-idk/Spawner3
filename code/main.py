@@ -42,10 +42,12 @@ class Game:
 
                 pygame.quit()
                 sys.exit()
-            if Menu.start_menu_active and not Menu.settings_active:
+            if Menu.start_menu_active and not Menu.settings_active and not Menu.developers_menu_active:
                 Menu.start_menu_active = Menu.start_menu(self.screen)
             elif Menu.settings_active:
                 Menu.settings(self.screen)
+            elif Menu.developers_menu_active:
+                Menu.developers(self.screen)
             else:
                 self.screen.fill("Light Blue")
                 self.level.run()
