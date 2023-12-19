@@ -40,8 +40,6 @@ class Game:
 
         self.level = Level()
 
-        self.cloud1 = TextCloud("Спасибо за внимание!", pygame.display.get_surface())
-
     def run(self) -> None:
         # game loop
         while True:
@@ -65,7 +63,6 @@ class Game:
                 if Menu.pause_menu_active:
                     Menu.pause_menu_active = Menu.pause_menu(self.screen)
 
-                self.cloud1.run((self.screen.get_size()[0] / 2, self.screen.get_size()[1] / 2 - 40))
                 pygame.display.update()
                 self.clock.tick(config.FPS)
 
