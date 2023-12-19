@@ -3,9 +3,11 @@
 import pickle
 import pygame
 import sys
+
 from level import *
 from menu import *
 from settings import *
+from phrases import *
 
 
 class Game:

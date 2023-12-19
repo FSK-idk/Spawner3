@@ -4,13 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="695c7180-237e-4e20-9d7d-b0c21ef600fe" name="Changes" comment="menu">
+      <change beforePath="$PROJECT_DIR$/code/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/main.py" afterDir="false" />
+=======
+    <list default="true" id="695c7180-237e-4e20-9d7d-b0c21ef600fe" name="Changes" comment="gavno">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/config.txt" afterDir="false" />
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Rebase.Settings">
     <option name="NEW_BASE" value="origin/main" />
@@ -34,16 +47,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;menu&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/verhovv/Desktop/Spawner3&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "verhovv",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/verhovv/Desktop/Spawner3",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Python.main">
     <configuration name="level" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Spawner3" />
@@ -74,7 +87,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/code" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -154,6 +166,12 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+<<<<<<< HEAD
+        <item itemvalue="Python.menu" />
+        <item itemvalue="Python.support" />
+=======
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
+        <item itemvalue="Python.level" />
         <item itemvalue="Python.support" />
         <item itemvalue="Python.player" />
         <item itemvalue="Python.menu" />
@@ -170,6 +188,7 @@
       <option name="presentableId" value="Default" />
       <updated>1700451255054</updated>
     </task>
+<<<<<<< HEAD
     <task id="LOCAL-00001" summary="menu">
       <option name="closed" value="true" />
       <created>1702249458109</created>
@@ -177,6 +196,15 @@
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
       <updated>1702249458109</updated>
+=======
+    <task id="LOCAL-00001" summary="gavno">
+      <option name="closed" value="true" />
+      <created>1702210268198</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702210268198</updated>
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
@@ -193,8 +221,13 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+<<<<<<< HEAD
     <MESSAGE value="menu gitignore" />
     <MESSAGE value="menu" />
     <option name="LAST_COMMIT_MESSAGE" value="menu" />
+=======
+    <MESSAGE value="gavno" />
+    <option name="LAST_COMMIT_MESSAGE" value="gavno" />
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
   </component>
 </project>
