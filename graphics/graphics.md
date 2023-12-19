@@ -3,13 +3,15 @@ graphics
 +--- gui
 +--- sprites
 | +--- background
-| | +--- mountain_floor
+| | +--- floor
 | | +--- rocks
 | | +--- trees
-| | +--- water
+| | +--- walls
+| | invisible.png
 | +--- npc
 | +--- objects
 | | +--- magic_trees
+| | +--- magic_rocks
 | +--- player
 | +--- teleports
 +--- test

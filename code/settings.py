@@ -23,6 +23,7 @@ class Config:
     CATS_LEVEL = 0
 
     IS_UPDATE = 0
+    UPDATE_BG = 0
 
 
 class GameData:

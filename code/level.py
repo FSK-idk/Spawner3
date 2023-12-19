@@ -53,10 +53,17 @@ class Level:
                 layouts = import_layouts("cats", ["constraints", "teleports", "npcs"])
 
         # set floor
-        self.background = Background(
-            [self.all_sprites],
-            config.PROJECT_FOLDER + f"/graphics/background_images/{self.name}.png",
-        )
+        if self.name != "cats":
+            self.background = Background(
+                [self.all_sprites],
+                config.PROJECT_FOLDER + f"/graphics/background_images/{self.name}.png",
+            )
+        else:
+            self.background = Background(
+                [self.all_sprites],
+                config.PROJECT_FOLDER
+                + f"/graphics/background_images/{config.CATS_LEVEL}_{self.name}.png",
+            )
 
         # in each layout add new tiles in our groups
         for layer, layout in layouts.items():
@@ -195,7 +202,7 @@ class Level:
                                 )
 
                         case "npcs":
-                            sprite_type = ["mesenev", "woodcutter", "miner"]
+                            sprite_type = ["mesenev", "woodcutter", "miner", "laptop"]
                             if val != "-1":
                                 path = (
                                     config.PROJECT_FOLDER
@@ -234,6 +241,23 @@ class Level:
         self.all_sprites.run()
         self.visible_sprites.custom_draw(self.player, self.background)
         self.visible_sprites.update()
+
+        if config.UPDATE_BG == 1:
+            self.background.kill()
+            if self.name != "cats":
+                self.background = Background(
+                    [self.all_sprites],
+                    config.PROJECT_FOLDER
+                    + f"/graphics/background_images/{self.name}.png",
+                )
+            else:
+                self.background = Background(
+                    [self.all_sprites],
+                    config.PROJECT_FOLDER
+                    + f"/graphics/background_images/{config.CATS_LEVEL}_{self.name}.png",
+                )
+        if config.UPDATE_BG != 0:
+            config.UPDATE_BG -= 1
 
         if config.IS_UPDATE == 1:
             self.all_sprites.update_sprites()

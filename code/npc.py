@@ -36,13 +36,16 @@ class NPC(pygame.sprite.Sprite):
         self.buying = False
 
     def show_bubble(self, flag):
-        if self.bubble_showing == False and flag == True:
-            self.bubble = Bubble(self.bubble_groups, self.rect.midtop, self.npc_type)
-            self.bubble_showing = True
-            config.IS_UPDATE = 2
-        elif self.bubble_showing == True and flag == False:
-            self.bubble.kill()
-            self.bubble_showing = False
+        if self.npc_type != "mesenev":
+            if self.bubble_showing == False and flag == True:
+                self.bubble = Bubble(
+                    self.bubble_groups, self.rect.midtop, self.npc_type
+                )
+                self.bubble_showing = True
+                config.IS_UPDATE = 2
+            elif self.bubble_showing == True and flag == False:
+                self.bubble.kill()
+                self.bubble_showing = False
 
     def interact(self):
         # check cooldown
@@ -53,7 +56,7 @@ class NPC(pygame.sprite.Sprite):
             self.buying_time = pygame.time.get_ticks()
 
             # buying
-            if self.npc_type == "woodcutter" and config.TREE_LEVEL < 3:
+            if self.npc_type == "woodcutter" and config.TREE_LEVEL < 2:
                 wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
                 if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
                     config.WOOD_AMOUNT -= wood
@@ -63,7 +66,7 @@ class NPC(pygame.sprite.Sprite):
                     self.show_bubble(True)
                     config.IS_UPDATE = 2
 
-            if self.npc_type == "miner" and config.ROCK_LEVEL < 3:
+            if self.npc_type == "miner" and config.ROCK_LEVEL < 2:
                 wood, stone = GameData.MINER_UPGRADE[config.ROCK_LEVEL]
                 if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
                     config.WOOD_AMOUNT -= wood
@@ -72,6 +75,17 @@ class NPC(pygame.sprite.Sprite):
                     self.show_bubble(False)
                     self.show_bubble(True)
                     config.IS_UPDATE = 2
+
+            if self.npc_type == "laptop" and config.CATS_LEVEL < 2:
+                wood, stone = GameData.CATS_UPGRADE[config.CATS_LEVEL]
+                if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
+                    config.WOOD_AMOUNT -= wood
+                    config.STONE_AMOUNT -= stone
+                    config.CATS_LEVEL += 1
+                    self.show_bubble(False)
+                    self.show_bubble(True)
+                    config.IS_UPDATE = 2
+                    config.UPDATE_BG = 2
 
         if self.buying and current_time - self.buying_time >= self.cooldown:
             self.buying = False
@@ -97,12 +111,12 @@ class Bubble(pygame.sprite.Sprite):
 
         font = pygame.font.Font(config.PROJECT_FOLDER + "/graphics/font/mago2.ttf", 16)
 
-        if self.bubble_type == "mesenev":
-            wood, stone = GameData.CATS_UPGRADE[config.CATS_LEVEL]
-        elif self.bubble_type == "woodcutter":
+        if self.bubble_type == "woodcutter":
             wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
         elif self.bubble_type == "miner":
             wood, stone = GameData.MINER_UPGRADE[config.ROCK_LEVEL]
+        elif self.bubble_type == "laptop":
+            wood, stone = GameData.CATS_UPGRADE[config.CATS_LEVEL]
 
         wood_surf = import_surface(
             config.PROJECT_FOLDER + "/graphics/gui/icons/wood.png"
