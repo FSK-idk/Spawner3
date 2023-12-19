@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="695c7180-237e-4e20-9d7d-b0c21ef600fe" name="Changes" comment="menu">
       <change beforePath="$PROJECT_DIR$/code/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/main.py" afterDir="false" />
+=======
+    <list default="true" id="695c7180-237e-4e20-9d7d-b0c21ef600fe" name="Changes" comment="gavno">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/config.txt" afterDir="false" />
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,9 +166,13 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+<<<<<<< HEAD
         <item itemvalue="Python.menu" />
         <item itemvalue="Python.support" />
+=======
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
         <item itemvalue="Python.level" />
+        <item itemvalue="Python.support" />
         <item itemvalue="Python.player" />
       </list>
     </recent_temporary>
@@ -176,6 +186,7 @@
       <option name="presentableId" value="Default" />
       <updated>1700451255054</updated>
     </task>
+<<<<<<< HEAD
     <task id="LOCAL-00001" summary="menu">
       <option name="closed" value="true" />
       <created>1702249458109</created>
@@ -183,6 +194,15 @@
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
       <updated>1702249458109</updated>
+=======
+    <task id="LOCAL-00001" summary="gavno">
+      <option name="closed" value="true" />
+      <created>1702210268198</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702210268198</updated>
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
@@ -199,8 +219,13 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+<<<<<<< HEAD
     <MESSAGE value="menu gitignore" />
     <MESSAGE value="menu" />
     <option name="LAST_COMMIT_MESSAGE" value="menu" />
+=======
+    <MESSAGE value="gavno" />
+    <option name="LAST_COMMIT_MESSAGE" value="gavno" />
+>>>>>>> 2a6128f79e419815dd51c3d021415e694dd2aba5
   </component>
 </project>
