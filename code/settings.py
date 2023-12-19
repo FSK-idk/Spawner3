@@ -25,6 +25,8 @@ class Config:
     IS_UPDATE = 0
     UPDATE_BG = 0
 
+    IS_BEGIN = True
+
 
 class GameData:
     # wood - stone
@@ -37,6 +39,7 @@ class HotKeys:
     interact = [pygame.K_e]
 
     pause = [pygame.K_ESCAPE]
+    contin = [pygame.K_SPACE]
 
     go_right = [pygame.K_RIGHT, pygame.K_d]
     go_left = [pygame.K_LEFT, pygame.K_a]

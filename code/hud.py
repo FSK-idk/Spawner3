@@ -9,10 +9,6 @@ class HUD(pygame.sprite.Sprite):
     def __init__(self, groups, surface) -> None:
         super().__init__(groups)
 
-        # info
-        self.wood = config.WOOD_AMOUNT
-        self.stone = config.STONE_AMOUNT
-
         # graphics
         self.display_surf = surface
 
@@ -60,6 +56,9 @@ class HUD(pygame.sprite.Sprite):
         self.update_info()
 
     def update_info(self):
+        self.wood = config.WOOD_AMOUNT
+        self.stone = config.STONE_AMOUNT
+
         # wood info
         self.wood_info_surf = self.font.render(
             f"{self.wood} ", False, "White"
@@ -80,6 +79,7 @@ class HUD(pygame.sprite.Sprite):
             self.display_surf.get_size(), pygame.SRCALPHA
         )
 
+        # draw
         self.image.blit(self.wood_surf, self.wood_rect)
         self.image.blit(self.wood_info_surf, self.wood_info_rect)
         self.image.blit(self.stone_surf, self.stone_rect)
@@ -89,6 +89,4 @@ class HUD(pygame.sprite.Sprite):
 
     def update(self):
         if self.wood != config.WOOD_AMOUNT or self.stone != config.STONE_AMOUNT:
-            self.wood = config.WOOD_AMOUNT
-            self.stone = config.STONE_AMOUNT
             self.update_info()

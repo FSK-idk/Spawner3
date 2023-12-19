@@ -317,7 +317,7 @@ class YSortGroup(pygame.sprite.Group):
 class AllSprites(pygame.sprite.Group):
     resize_step = 0.2
     max_resize_coeff = 5
-    min_resize_coeff = 3.2
+    min_resize_coeff = 3.3
     resize_coeff = min_resize_coeff
 
     def __init__(self) -> None:

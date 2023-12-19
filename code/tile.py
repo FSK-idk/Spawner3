@@ -7,31 +7,32 @@ from settings import *
 class Tile(pygame.sprite.Sprite):
     def __init__(self, groups, path, pos) -> None:
         super().__init__(groups)
-        self.tile_folder = path
+        self.folder = path
         self.position = pos
 
-        self.init()
+        self.update_graphics()
 
-    def init(self):
-        # graphics
-        self.surfaces = import_surfaces(self.tile_folder + "animation/")
+    def update_graphics(self):
+        # picture
+        self.surfaces = import_surfaces(self.folder + "animation/")
 
         self.root_image = self.surfaces[0]
         self.image = self.root_image
 
         self.rect = self.image.get_rect(midbottom=self.position)
 
-        # YSortGroup info
-        self.ysort = import_ysort(self.tile_folder)
+        # sorting by Y info
+        self.ysort = import_ysort(self.folder)
         self.ysort.midtop = self.rect.midtop
 
         # collision
-        self.mask = import_mask(self.tile_folder, "mask")
+        self.mask = import_mask(self.folder, "mask")
 
 
 class TeleportTile(Tile):
     def __init__(self, groups, path, pos, sprite_type) -> None:
         super().__init__(groups, path, pos)
+
         self.sprite_type = sprite_type
 
     def teleport(self):
@@ -54,10 +55,8 @@ class InteractiveTile(Tile):
     def __init__(self, groups, path, pos) -> None:
         super().__init__(groups, path, pos)
 
-        self.interact_mask = import_mask(self.tile_folder, "interact_mask")
-
-    def interact(self) -> None:
-        pass
+        # interctive data
+        self.interact_mask = import_mask(self.folder, "interact_mask")
 
 
 class MagicTree(InteractiveTile):
@@ -87,12 +86,12 @@ class MagicTree(InteractiveTile):
     def level_up(self):
         self.level = config.TREE_LEVEL
 
-        self.tile_folder = (
+        self.folder = (
             config.PROJECT_FOLDER
             + f"/graphics/sprites/objects/magic_trees/{self.level}_magic_tree/"
         )
 
-        self.init()
+        self.update_graphics()
 
     def update(self):
         if self.level != config.TREE_LEVEL:
@@ -114,12 +113,12 @@ class MagicRock(InteractiveTile):
     def level_up(self):
         self.level = config.ROCK_LEVEL
 
-        self.tile_folder = (
+        self.folder = (
             config.PROJECT_FOLDER
             + f"/graphics/sprites/objects/magic_rocks/{self.level}_magic_rock/"
         )
 
-        self.init()
+        self.update_graphics()
 
     def interact(self) -> None:
         # check cooldown

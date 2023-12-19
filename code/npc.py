@@ -9,14 +9,15 @@ class NPC(pygame.sprite.Sprite):
         super().__init__(npc_groups)
         self.npc_folder = path
         self.npc_type = type
+        self.position = pos
 
         # graphics
-        self.surfaces = import_surfaces(self.npc_folder + "animation/")
+        self.animations = import_surfaces(self.npc_folder + "animation/")
 
-        self.root_image = self.surfaces[0]
+        self.root_image = self.animations[0]
         self.image = self.root_image
 
-        self.rect = self.image.get_rect(midbottom=pos)
+        self.rect = self.image.get_rect(midbottom=self.position)
 
         # YSortGroup info
         self.ysort = import_ysort(self.npc_folder)
@@ -39,10 +40,14 @@ class NPC(pygame.sprite.Sprite):
         if self.npc_type != "mesenev":
             if self.bubble_showing == False and flag == True:
                 self.bubble = Bubble(
-                    self.bubble_groups, self.rect.midtop, self.npc_type
+                    self.bubble_groups,
+                    self.rect.midtop,
+                    self.npc_type,
                 )
                 self.bubble_showing = True
                 config.IS_UPDATE = 2
+                print("topleft", self.rect.topleft)
+
             elif self.bubble_showing == True and flag == False:
                 self.bubble.kill()
                 self.bubble_showing = False
@@ -96,7 +101,7 @@ class Bubble(pygame.sprite.Sprite):
         super().__init__(groups)
         self.bubble_type = bubble_type
         self.bubble_folder = config.PROJECT_FOLDER + "/graphics/gui/bubbles/0_bubble/"
-        self.position = pos
+        self.position = (pos[0], pos[1])
 
         # graphics
         self.surfaces = import_surfaces(self.bubble_folder)
