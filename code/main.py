@@ -10,6 +10,7 @@ from settings import *
 from cutscene import *
 from phrases import *
 from save_manager import *
+from sound_manager import *
 
 
 class Game:
@@ -18,6 +19,7 @@ class Game:
         pygame.init()
 
         self.save_manager = SaveManager()
+        self.sound_manager = SoundManager()
 
         # load
         self.save_manager.load()
@@ -30,6 +32,9 @@ class Game:
         self.level = Level()
         self.cutscene = CutScene()
 
+        # music
+        # self.sound_manager.change_music()
+
     def run(self) -> None:
         # game loop
         while True:
@@ -39,6 +44,7 @@ class Game:
 
                 pygame.quit()
                 sys.exit()
+
             if (
                 Menu.start_menu_active
                 and not Menu.settings_active
@@ -64,6 +70,8 @@ class Game:
 
                 pygame.display.update()
                 self.clock.tick(config.FPS)
+
+            self.sound_manager.update()
 
 
 if __name__ == "__main__":
