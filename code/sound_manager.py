@@ -5,11 +5,13 @@ from menu import *
 
 class SoundManager:
     def __init__(self) -> None:
-        self.change_music()
-        pygame.mixer.music.play()
-
         self.start_menu_active = True
         self.level_name = "mountain"
+        self.volume = Menu.volume
+
+        self.change_music()
+        pygame.mixer.music.play()
+        pygame.mixer.music.set_volume(self.volume / 100.0)
 
     def change_music(self):
         if Menu.start_menu_active:
@@ -25,9 +27,14 @@ class SoundManager:
                 case "cats":
                     pygame.mixer.music.load(config.PROJECT_FOLDER + "/audio/cats.mp3")
 
+        pygame.mixer.music.set_volume(self.volume / 100.0)
         pygame.mixer.music.play()
 
     def update(self):
+        if self.volume != Menu.volume:
+            self.volume = Menu.volume
+            pygame.mixer.music.set_volume(self.volume / 100.0)
+
         if not self.start_menu_active and Menu.start_menu_active:
             self.start_menu_active = True
             self.change_music()
