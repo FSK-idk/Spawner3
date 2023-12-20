@@ -10,7 +10,7 @@ class SoundManager:
         self.volume = Menu.volume
 
         self.change_music()
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(loops=-1)
         pygame.mixer.music.set_volume(self.volume / 100.0)
 
     def change_music(self):
@@ -28,7 +28,7 @@ class SoundManager:
                     pygame.mixer.music.load(config.PROJECT_FOLDER + "/audio/cats.mp3")
 
         pygame.mixer.music.set_volume(self.volume / 100.0)
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(loops=-1)
 
     def update(self):
         if self.volume != Menu.volume:

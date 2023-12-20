@@ -1,10 +1,24 @@
 # npc class
 
 import pygame
+
+from phrases import TextCloud
 from settings import *
+import random
 
 
 class NPC(pygame.sprite.Sprite):
+    mesenev_cloud = None
+    mesenev_phrases = [
+        "ХАХАХА! Программирование",
+        "9 программистов не могут родить одного ребенка за месяц",
+        "Надо же было спавнер на расте написать!",
+        "Я люблю своих учеников",
+        "Кто не сдаст 16 задач на хаскеле - в бан!",
+        "Да мне все равно, я на доске программирую!",
+        "Вопрос не придумали? Двойка Вам за пару",
+    ]
+
     def __init__(self, npc_groups, bubble_gruops, path, pos, type) -> None:
         super().__init__(npc_groups)
         self.npc_folder = path
@@ -41,8 +55,10 @@ class NPC(pygame.sprite.Sprite):
             if self.bubble_showing == False and flag == True:
                 self.bubble = Bubble(
                     self.bubble_groups,
-                    self.rect.topleft,
-                    self.root_image.get_size()[0],
+                    (
+                        self.rect.left + self.root_image.get_size()[0] // 2,
+                        self.rect.top,
+                    ),
                     self.npc_type,
                 )
                 self.bubble_showing = True
@@ -51,6 +67,9 @@ class NPC(pygame.sprite.Sprite):
             elif self.bubble_showing == True and flag == False:
                 self.bubble.kill()
                 self.bubble_showing = False
+
+        if NPC.mesenev_cloud:
+            NPC.mesenev_cloud.run()
 
     def interact(self):
         # check cooldown
@@ -92,16 +111,29 @@ class NPC(pygame.sprite.Sprite):
                     config.IS_UPDATE = 2
                     config.UPDATE_BG = 2
 
+            if self.npc_type == "mesenev":
+                if NPC.mesenev_cloud:
+                    NPC.mesenev_cloud.kill()
+                NPC.mesenev_cloud = TextCloud(
+                    random.choice(NPC.mesenev_phrases),
+                    self.bubble_groups,
+                    (
+                        self.rect.left + self.root_image.get_size()[0] // 2,
+                        self.rect.top,
+                    ),
+                )
+                config.IS_UPDATE = 2
+
         if self.buying and current_time - self.buying_time >= self.cooldown:
             self.buying = False
 
 
 class Bubble(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, length, bubble_type):
+    def __init__(self, groups, pos, bubble_type):
         super().__init__(groups)
         self.bubble_type = bubble_type
         self.bubble_folder = config.PROJECT_FOLDER + "/graphics/gui/bubbles/0_bubble/"
-        self.position = (pos[0], pos[1])
+        self.position = pos
 
         # graphics
         self.surfaces = import_surfaces(self.bubble_folder)
@@ -109,12 +141,7 @@ class Bubble(pygame.sprite.Sprite):
         self.root_image = self.surfaces[0]
         self.image = self.root_image
 
-        self.rect = self.image.get_rect(
-            bottomleft=(
-                self.position[0] - (self.image.get_size()[0] - length) // 2,
-                self.position[1],
-            )
-        )
+        self.rect = self.image.get_rect(midbottom=self.position)
 
         # YSortGroup info
         self.ysort = self.rect

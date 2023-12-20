@@ -267,6 +267,8 @@ class Level:
         self.hud_sprites.draw(self.display_surface)
         self.hud_sprites.update()
 
+        self.all_sprites.update_queue()
+
 
 class YSortGroup(pygame.sprite.Group):
     def __init__(self) -> None:
@@ -377,20 +379,31 @@ class AllSprites(pygame.sprite.Group):
                     ),
                 )
 
-                # if not isinstance(sprite, Background):
-                #     sprite.rect = sprite.image.get_rect(
-                #         midbottom=(
-                #             sprite.position[0],
-                #             sprite.position[1],
-                #         )
-                #     )
-
                 sprite.rect.width = (
                     sprite.root_image.get_size()[0] * AllSprites.resize_coeff
                 )
                 sprite.rect.height = (
                     sprite.root_image.get_size()[1] * AllSprites.resize_coeff
                 )
+
+    def update_queue(self):
+        for sprite in config.QUEUE:
+            sprite.image = pygame.transform.scale(
+                sprite.root_image,
+                (
+                    (sprite.root_image.get_size()[0] * AllSprites.resize_coeff),
+                    (sprite.root_image.get_size()[1] * AllSprites.resize_coeff),
+                ),
+            )
+
+            sprite.rect.width = (
+                sprite.root_image.get_size()[0] * AllSprites.resize_coeff
+            )
+            sprite.rect.height = (
+                sprite.root_image.get_size()[1] * AllSprites.resize_coeff
+            )
+
+            config.QUEUE.pop()
 
     def run(self) -> None:
         self.mouse_event_check()

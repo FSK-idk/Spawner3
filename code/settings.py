@@ -27,6 +27,8 @@ class Config:
 
     IS_BEGIN = False
 
+    QUEUE = []
+
 
 class GameData:
     # wood - stone

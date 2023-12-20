@@ -11,6 +11,6 @@
   <image width="32" height="42" source="../../graphics/sprites/npcs/2_miner/animation/0.png"/>
  </tile>
  <tile id="3">
-  <image width="32" height="64" source="../../graphics/sprites/npcs/3_laptop/animation/laptop.png"/>
+  <image width="32" height="44" source="../../graphics/sprites/npcs/3_laptop/animation/0.png"/>
  </tile>
 </tileset>

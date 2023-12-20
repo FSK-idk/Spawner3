@@ -112,7 +112,7 @@ pip-selfcheck.json
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-data/config.txt
+data/*.txt
 
 # AWS User-specific
 .idea/**/aws.xml
