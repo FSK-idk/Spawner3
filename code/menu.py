@@ -27,8 +27,8 @@ class Menu:
 
     slider = Slider(
         settings_screen,
-        Config.WIDTH // 2 - 200,
-        Config.HEIGHT // 2,
+        config.WIDTH // 2 - 200,
+        config.HEIGHT // 2,
         400,
         20,
         min=0,
@@ -96,16 +96,16 @@ class Menu:
         button_quit = pygame.image.load("../graphics/gui/buttons/quit.png")
 
         button_play_rect = button_play.get_rect(
-            center=(Config.WIDTH / 2, Config.HEIGHT / 2)
+            center=(config.WIDTH / 2, config.HEIGHT / 2)
         )
         button_settings_rect = button_settings.get_rect(
-            center=(Config.WIDTH / 2, Config.HEIGHT / 6 * 3.67)
+            center=(config.WIDTH / 2, config.HEIGHT / 6 * 3.67)
         )
         button_developers_rect = button_developers.get_rect(
-            center=(Config.WIDTH / 2, Config.HEIGHT / 4 * 2.87)
+            center=(config.WIDTH / 2, config.HEIGHT / 4 * 2.87)
         )
         button_quit_rect = button_quit.get_rect(
-            center=(Config.WIDTH / 2, Config.HEIGHT / 4 * 3.3)
+            center=(config.WIDTH / 2, config.HEIGHT / 4 * 3.3)
         )
 
         main_menu = pygame.Surface((config.WIDTH, config.HEIGHT))
@@ -146,7 +146,9 @@ class Menu:
                 button_quit_rect.collidepoint(mouse)
                 and event.type == pygame.MOUSEBUTTONUP
             ):
-                sys.exit()
+                pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+                # sys.exit()
 
         screen.blit(main_menu, (0, 0))
 
@@ -204,52 +206,52 @@ class Menu:
         profile4 = pygame.image.load("../graphics/gui/profile/profile4.png")
 
         profile1_rect = profile1.get_rect()
-        profile1_rect.x = Config.WIDTH / 10
-        profile1_rect.y = Config.WIDTH / 9
+        profile1_rect.x = config.WIDTH / 10
+        profile1_rect.y = config.WIDTH / 9
 
         profile2_rect = profile2.get_rect()
-        profile2_rect.x = Config.WIDTH / 3.2
-        profile2_rect.y = Config.WIDTH / 9
+        profile2_rect.x = config.WIDTH / 3.2
+        profile2_rect.y = config.WIDTH / 9
 
         profile3_rect = profile3.get_rect()
-        profile3_rect.x = Config.WIDTH / 1.9
-        profile3_rect.y = Config.WIDTH / 9
+        profile3_rect.x = config.WIDTH / 1.9
+        profile3_rect.y = config.WIDTH / 9
 
         profile4_rect = profile4.get_rect()
-        profile4_rect.x = Config.WIDTH / 1.35
-        profile4_rect.y = Config.WIDTH / 9
+        profile4_rect.x = config.WIDTH / 1.35
+        profile4_rect.y = config.WIDTH / 9
 
         button_quit_rect = button_quit.get_rect(
-            center=(Config.WIDTH / 2, Config.HEIGHT / 6 * 4)
+            center=(config.WIDTH / 2, config.HEIGHT / 6 * 4)
         )
 
         font = pygame.font.Font(None, 50)
         small_font = pygame.font.Font(None, 35)
 
         text = font.render("Разработчики:", True, "Black")
-        text_rect = text.get_rect(center=(Config.WIDTH / 2, Config.HEIGHT / 8))
+        text_rect = text.get_rect(center=(config.WIDTH / 2, config.HEIGHT / 8))
 
         name_text1 = small_font.render("Симанков Александр", True, "Black")
         name_text1_rect = name_text1.get_rect()
-        name_text1_rect.x = Config.WIDTH / 10
-        name_text1_rect.y = Config.WIDTH / 3.2
+        name_text1_rect.x = config.WIDTH / 10
+        name_text1_rect.y = config.WIDTH / 3.2
 
         name_text2 = small_font.render("Рыбкин Владимир", True, "Black")
         name_text2_rect = name_text1.get_rect()
-        name_text2_rect.x = Config.WIDTH / 3.2
-        name_text2_rect.y = Config.WIDTH / 3.2
+        name_text2_rect.x = config.WIDTH / 3.2
+        name_text2_rect.y = config.WIDTH / 3.2
 
         name_text3 = small_font.render("Верхов Владимир", True, "Black")
         name_text3_rect = name_text1.get_rect()
-        name_text3_rect.x = Config.WIDTH / 1.9
-        name_text3_rect.y = Config.WIDTH / 3.2
+        name_text3_rect.x = config.WIDTH / 1.9
+        name_text3_rect.y = config.WIDTH / 3.2
 
         name_text4 = small_font.render("Можаров Дмитрий", True, "Black")
         name_text4_rect = name_text1.get_rect()
-        name_text4_rect.x = Config.WIDTH / 1.35
-        name_text4_rect.y = Config.WIDTH / 3.2
+        name_text4_rect.x = config.WIDTH / 1.35
+        name_text4_rect.y = config.WIDTH / 3.2
 
-        developers_menu = pygame.Surface((Config.WIDTH, Config.HEIGHT))
+        developers_menu = pygame.Surface((config.WIDTH, config.HEIGHT))
         developers_menu.fill("Green")
 
         developers_menu.blit(button_quit, button_quit_rect)

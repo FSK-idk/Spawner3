@@ -9,6 +9,7 @@ from menu import *
 from settings import *
 from cutscene import *
 from phrases import *
+from save_manager import *
 
 
 class Game:
@@ -16,23 +17,10 @@ class Game:
         # general setup
         pygame.init()
 
-        # load save
-        try:
-            with open(config.PROJECT_FOLDER + "/data/config.txt", "rb") as f:
-                conf: Config = pickle.load(f)
+        self.save_manager = SaveManager()
 
-                config.CURRENT_LEVEL = conf.CURRENT_LEVEL
-                config.PLAYER_POS = conf.PLAYER_POS
-
-                config.WOOD_AMOUNT = 500  # conf.WOOD_AMOUNT
-                config.STONE_AMOUNT = 500  # conf.STONE_AMOUNT
-
-                config.TREE_LEVEL = 1  # conf.TREE_LEVEL
-                config.ROCK_LEVEL = 0  # conf.ROCK_LEVEL
-                config.CATS_LEVEL = 0  # conf.CATS_LEVEL
-        except:
-            with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
-                pickle.dump(config, f)
+        # load
+        self.save_manager.load()
 
         self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
 
@@ -46,9 +34,8 @@ class Game:
         # game loop
         while True:
             if pygame.event.get(pygame.QUIT):
-                # dump save
-                with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
-                    pickle.dump(config, f)
+                #  save
+                self.save_manager.save()
 
                 pygame.quit()
                 sys.exit()
