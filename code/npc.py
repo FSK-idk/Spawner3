@@ -53,6 +53,12 @@ class NPC(pygame.sprite.Sprite):
     def show_bubble(self, flag):
         if self.npc_type != "mesenev":
             if self.bubble_showing == False and flag == True:
+                if self.npc_type == "woodcutter" and config.TREE_LEVEL == 3:
+                    return
+
+                if self.npc_type == "miner" and config.ROCK_LEVEL == 3:
+                    return
+
                 self.bubble = Bubble(
                     self.bubble_groups,
                     (
@@ -80,24 +86,30 @@ class NPC(pygame.sprite.Sprite):
             self.buying_time = pygame.time.get_ticks()
 
             # buying
-            if self.npc_type == "woodcutter" and config.TREE_LEVEL < 2:
+            if self.npc_type == "woodcutter" and config.TREE_LEVEL < 3:
                 wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
                 if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
                     config.WOOD_AMOUNT -= wood
                     config.STONE_AMOUNT -= stone
                     config.TREE_LEVEL += 1
                     self.show_bubble(False)
-                    self.show_bubble(True)
+
+                    if config.TREE_LEVEL < 3:
+                        self.show_bubble(True)
+
                     config.IS_UPDATE = 2
 
-            if self.npc_type == "miner" and config.ROCK_LEVEL < 2:
+            if self.npc_type == "miner" and config.ROCK_LEVEL < 3:
                 wood, stone = GameData.MINER_UPGRADE[config.ROCK_LEVEL]
                 if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
                     config.WOOD_AMOUNT -= wood
                     config.STONE_AMOUNT -= stone
                     config.ROCK_LEVEL += 1
                     self.show_bubble(False)
-                    self.show_bubble(True)
+
+                    if config.ROCK_LEVEL < 3:
+                        self.show_bubble(True)
+
                     config.IS_UPDATE = 2
 
             if self.npc_type == "laptop" and config.CATS_LEVEL < 2:
@@ -107,7 +119,10 @@ class NPC(pygame.sprite.Sprite):
                     config.STONE_AMOUNT -= stone
                     config.CATS_LEVEL += 1
                     self.show_bubble(False)
-                    self.show_bubble(True)
+
+                    if config.CATS_LEVEL < 2:
+                        self.show_bubble(True)
+
                     config.IS_UPDATE = 2
                     config.UPDATE_BG = 2
 

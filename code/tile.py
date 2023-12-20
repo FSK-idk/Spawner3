@@ -62,7 +62,7 @@ class InteractiveTile(Tile):
 class MagicTree(InteractiveTile):
     def __init__(self, groups, path, pos) -> None:
         super().__init__(groups, path, pos)
-        self.gain = 1
+        self.gain = GameData.WOOD_GAIN[config.TREE_LEVEL]
         self.level = config.TREE_LEVEL
         self.level_up()
 
@@ -85,6 +85,7 @@ class MagicTree(InteractiveTile):
 
     def level_up(self):
         self.level = config.TREE_LEVEL
+        self.gain = GameData.WOOD_GAIN[config.TREE_LEVEL]
 
         self.folder = (
             config.PROJECT_FOLDER
@@ -101,7 +102,7 @@ class MagicTree(InteractiveTile):
 class MagicRock(InteractiveTile):
     def __init__(self, groups, path, pos) -> None:
         super().__init__(groups, path, pos)
-        self.gain = 1
+        self.gain = GameData.STONE_GAIN[config.ROCK_LEVEL]
         self.level = config.ROCK_LEVEL
         self.level_up()
 
@@ -112,6 +113,7 @@ class MagicRock(InteractiveTile):
 
     def level_up(self):
         self.level = config.ROCK_LEVEL
+        self.gain = GameData.STONE_GAIN[config.ROCK_LEVEL]
 
         self.folder = (
             config.PROJECT_FOLDER

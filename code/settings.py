@@ -12,8 +12,8 @@ class Config:
     TILE_SIZE = 32
     PROJECT_FOLDER = get_parent_dir()
 
-    CURRENT_LEVEL = "mountain"
-    PLAYER_POS = (400, 250)
+    CURRENT_LEVEL = "cats"
+    PLAYER_POS = (500, 450)
 
     WOOD_AMOUNT = 0
     STONE_AMOUNT = 0
@@ -32,9 +32,12 @@ class Config:
 
 class GameData:
     # wood - stone
-    WOODCUTTER_UPGRADE = [(20, 0), (50, 100), (400, 800)]
-    MINER_UPGRADE = [(20, 0), (50, 100), (400, 800)]
-    CATS_UPGRADE = [(20, 0), (50, 100), (400, 800)]
+    WOODCUTTER_UPGRADE = [(20, 0), (500, 600), (900, 1000)]
+    MINER_UPGRADE = [(10, 10), (600, 500), (1000, 900)]
+    CATS_UPGRADE = [(200, 200), (800, 800), (1500, 1500)]
+
+    WOOD_GAIN = [1, 20, 50, 100]
+    STONE_GAIN = [1, 20, 50, 100]
 
 
 class HotKeys:
