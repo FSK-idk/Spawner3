@@ -1,10 +1,24 @@
 # npc class
 
 import pygame
+
+from phrases import TextCloud
 from settings import *
+import random
 
 
 class NPC(pygame.sprite.Sprite):
+    mesenev_cloud = None
+    mesenev_phrases = [
+        'ХАХАХА! Программирование',
+        '9 программистов не могут родить одного ребенка за месяц',
+        'Надо же было спавнер на расте написать!',
+        'Я люблю своих учеников',
+        'Кто не сдаст 16 задач на хаскеле - в бан!',
+        'Да мне все равно, я на доске программирую!',
+        'Вопрос не придумали? Двойка Вам за пару',
+    ]
+
     def __init__(self, npc_groups, bubble_gruops, path, pos, type) -> None:
         super().__init__(npc_groups)
         self.npc_folder = path
@@ -52,6 +66,9 @@ class NPC(pygame.sprite.Sprite):
                 self.bubble.kill()
                 self.bubble_showing = False
 
+        if NPC.mesenev_cloud:
+            NPC.mesenev_cloud.run()
+
     def interact(self):
         # check cooldown
         current_time = pygame.time.get_ticks()
@@ -91,6 +108,11 @@ class NPC(pygame.sprite.Sprite):
                     self.show_bubble(True)
                     config.IS_UPDATE = 2
                     config.UPDATE_BG = 2
+
+            if self.npc_type == 'mesenev':
+                if NPC.mesenev_cloud:
+                    NPC.mesenev_cloud.kill()
+                NPC.mesenev_cloud = TextCloud(random.choice(NPC.mesenev_phrases), self.bubble_groups, self.rect.topleft)
 
         if self.buying and current_time - self.buying_time >= self.cooldown:
             self.buying = False
@@ -141,10 +163,10 @@ class Bubble(pygame.sprite.Sprite):
             wood_info_rect = wood_info_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        - wood_info_surf.get_size()[0]
-                        - wood_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            - wood_info_surf.get_size()[0]
+                            - wood_surf.get_size()[0]
+                            - 1
                     )
                     // 2,
                     self.image.get_size()[1] // 2 - 2,
@@ -154,10 +176,10 @@ class Bubble(pygame.sprite.Sprite):
             wood_rect = wood_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        + wood_info_surf.get_size()[0]
-                        - wood_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            + wood_info_surf.get_size()[0]
+                            - wood_surf.get_size()[0]
+                            - 1
                     )
                     // 2
                     + 1,
@@ -174,10 +196,10 @@ class Bubble(pygame.sprite.Sprite):
             stone_info_rect = stone_info_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        - stone_info_surf.get_size()[0]
-                        - stone_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            - stone_info_surf.get_size()[0]
+                            - stone_surf.get_size()[0]
+                            - 1
                     )
                     // 2,
                     self.image.get_size()[1] // 2 - 2,
@@ -187,10 +209,10 @@ class Bubble(pygame.sprite.Sprite):
             stone_rect = stone_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        + stone_info_surf.get_size()[0]
-                        - stone_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            + stone_info_surf.get_size()[0]
+                            - stone_surf.get_size()[0]
+                            - 1
                     )
                     // 2
                     + 1,
@@ -209,10 +231,10 @@ class Bubble(pygame.sprite.Sprite):
             wood_info_rect = wood_info_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        - wood_info_surf.get_size()[0]
-                        - wood_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            - wood_info_surf.get_size()[0]
+                            - wood_surf.get_size()[0]
+                            - 1
                     )
                     // 2,
                     self.image.get_size()[1] // 4 - 2,
@@ -222,10 +244,10 @@ class Bubble(pygame.sprite.Sprite):
             stone_info_rect = stone_info_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        - stone_info_surf.get_size()[0]
-                        - stone_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            - stone_info_surf.get_size()[0]
+                            - stone_surf.get_size()[0]
+                            - 1
                     )
                     // 2,
                     self.image.get_size()[1] * 3 // 4 - 2,
@@ -235,10 +257,10 @@ class Bubble(pygame.sprite.Sprite):
             wood_rect = wood_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        + wood_info_surf.get_size()[0]
-                        - wood_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            + wood_info_surf.get_size()[0]
+                            - wood_surf.get_size()[0]
+                            - 1
                     )
                     // 2
                     + 1,
@@ -249,10 +271,10 @@ class Bubble(pygame.sprite.Sprite):
             stone_rect = stone_surf.get_rect(
                 midleft=(
                     (
-                        self.image.get_size()[0]
-                        + stone_info_surf.get_size()[0]
-                        - stone_surf.get_size()[0]
-                        - 1
+                            self.image.get_size()[0]
+                            + stone_info_surf.get_size()[0]
+                            - stone_surf.get_size()[0]
+                            - 1
                     )
                     // 2
                     + 1,
