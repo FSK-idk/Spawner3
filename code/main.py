@@ -1,6 +1,5 @@
 # game start
 
-import pickle
 import pygame
 import sys
 
@@ -21,19 +20,14 @@ class Game:
         self.save_manager = SaveManager()
         self.sound_manager = SoundManager()
 
-        # load
-        self.save_manager.load()
-
         self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
 
         pygame.display.set_caption("Spawner3")
+
         self.clock = pygame.time.Clock()
 
         self.level = Level()
         self.cutscene = CutScene()
-
-        # music
-        # self.sound_manager.change_music()
 
     def run(self) -> None:
         # game loop

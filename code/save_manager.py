@@ -4,7 +4,7 @@ from settings import *
 
 class SaveManager:
     def __init__(self):
-        pass
+        self.load()
 
     def load(self):
         try:
