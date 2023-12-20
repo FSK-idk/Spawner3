@@ -2,6 +2,7 @@
 
 import pygame
 from background import *
+from hud import *
 from npc import *
 from player import *
 from settings import *
@@ -20,6 +21,9 @@ class Level:
         self.obstacle_sprites = pygame.sprite.Group()
         self.all_sprites = AllSprites()
 
+        self.hud_sprites = pygame.sprite.Group()
+        HUD([self.hud_sprites], self.display_surface)
+
         # level info
         self.name = "mountain"
 
@@ -31,21 +35,35 @@ class Level:
         match self.name:
             case "mountain":
                 layouts = import_layouts(
-                    "mountain", ["constraints", "teleports", "magic_trees", "npcs"]
+                    "mountain",
+                    [
+                        "constraints",
+                        "teleports",
+                        "magic_trees",
+                        "npcs",
+                        "trees",
+                    ],
                 )
             case "cave":
                 layouts = import_layouts(
-                    "cave", ["constraints", "teleports", "magic_rocks", "npcs"]
+                    "cave", ["constraints", "teleports", "magic_rocks", "npcs", "rocks"]
                 )
 
             case "cats":
                 layouts = import_layouts("cats", ["constraints", "teleports", "npcs"])
 
         # set floor
-        self.background = Background(
-            [self.all_sprites],
-            config.PROJECT_FOLDER + f"/graphics/background_images/{self.name}.png",
-        )
+        if self.name != "cats":
+            self.background = Background(
+                [self.all_sprites],
+                config.PROJECT_FOLDER + f"/graphics/background_images/{self.name}.png",
+            )
+        else:
+            self.background = Background(
+                [self.all_sprites],
+                config.PROJECT_FOLDER
+                + f"/graphics/background_images/{config.CATS_LEVEL}_{self.name}.png",
+            )
 
         # in each layout add new tiles in our groups
         for layer, layout in layouts.items():
@@ -103,6 +121,36 @@ class Level:
                                         (x, y),
                                     )
 
+                        case "trees":
+                            if val != "-1":
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + f"/graphics/sprites/background/trees/{int(val)}_tree/"
+                                )
+                                Tile(
+                                    [
+                                        self.all_sprites,
+                                        self.visible_sprites,
+                                    ],
+                                    path,
+                                    (x, y),
+                                )
+
+                        case "rocks":
+                            if val != "-1":
+                                path = (
+                                    config.PROJECT_FOLDER
+                                    + f"/graphics/sprites/background/rocks/{int(val)}_rock/"
+                                )
+                                Tile(
+                                    [
+                                        self.all_sprites,
+                                        self.visible_sprites,
+                                    ],
+                                    path,
+                                    (x, y),
+                                )
+
                         case "teleports":
                             sprite_type = ["mountain", "cave", "cats"]
                             if val != "-1":
@@ -114,7 +162,7 @@ class Level:
                                 TeleportTile(
                                     [
                                         self.all_sprites,
-                                        self.visible_sprites,
+                                        # self.visible_sprites,
                                         self.obstacle_sprites,
                                     ],
                                     path,
@@ -154,7 +202,7 @@ class Level:
                                 )
 
                         case "npcs":
-                            sprite_type = ["mesenev", "woodcutter", "miner"]
+                            sprite_type = ["mesenev", "woodcutter", "miner", "laptop"]
                             if val != "-1":
                                 path = (
                                     config.PROJECT_FOLDER
@@ -193,6 +241,31 @@ class Level:
         self.all_sprites.run()
         self.visible_sprites.custom_draw(self.player, self.background)
         self.visible_sprites.update()
+
+        if config.UPDATE_BG == 1:
+            self.background.kill()
+            if self.name != "cats":
+                self.background = Background(
+                    [self.all_sprites],
+                    config.PROJECT_FOLDER
+                    + f"/graphics/background_images/{self.name}.png",
+                )
+            else:
+                self.background = Background(
+                    [self.all_sprites],
+                    config.PROJECT_FOLDER
+                    + f"/graphics/background_images/{config.CATS_LEVEL}_{self.name}.png",
+                )
+        if config.UPDATE_BG != 0:
+            config.UPDATE_BG -= 1
+
+        if config.IS_UPDATE == 1:
+            self.all_sprites.update_sprites()
+        if config.IS_UPDATE != 0:
+            config.IS_UPDATE -= 1
+
+        self.hud_sprites.draw(self.display_surface)
+        self.hud_sprites.update()
 
 
 class YSortGroup(pygame.sprite.Group):
@@ -238,15 +311,13 @@ class YSortGroup(pygame.sprite.Group):
         # debug
         self.clock.tick()
         debug(self.clock.get_fps())
-        debug(f"Wood: {config.WOOD_AMOUNT}", 30)
-        debug(f"Stone: {config.STONE_AMOUNT}", 50)
-        debug(f"Interact: {HotKeys.is_pressed(HotKeys.interact)}", 70)
+        debug(f"Interact: {HotKeys.is_pressed(HotKeys.interact)}", 30)
 
 
 class AllSprites(pygame.sprite.Group):
-    resize_step = 0.1
+    resize_step = 0.2
     max_resize_coeff = 5
-    min_resize_coeff = 3
+    min_resize_coeff = 3.3
     resize_coeff = min_resize_coeff
 
     def __init__(self) -> None:
@@ -305,6 +376,14 @@ class AllSprites(pygame.sprite.Group):
                         (sprite.root_image.get_size()[1] * AllSprites.resize_coeff),
                     ),
                 )
+
+                # if not isinstance(sprite, Background):
+                #     sprite.rect = sprite.image.get_rect(
+                #         midbottom=(
+                #             sprite.position[0],
+                #             sprite.position[1],
+                #         )
+                #     )
 
                 sprite.rect.width = (
                     sprite.root_image.get_size()[0] * AllSprites.resize_coeff

@@ -9,14 +9,15 @@ class NPC(pygame.sprite.Sprite):
         super().__init__(npc_groups)
         self.npc_folder = path
         self.npc_type = type
+        self.position = pos
 
         # graphics
-        self.surfaces = import_surfaces(self.npc_folder + "animation/")
+        self.animations = import_surfaces(self.npc_folder + "animation/")
 
-        self.root_image = self.surfaces[0]
+        self.root_image = self.animations[0]
         self.image = self.root_image
 
-        self.rect = self.image.get_rect(midbottom=pos)
+        self.rect = self.image.get_rect(midbottom=self.position)
 
         # YSortGroup info
         self.ysort = import_ysort(self.npc_folder)
@@ -36,12 +37,20 @@ class NPC(pygame.sprite.Sprite):
         self.buying = False
 
     def show_bubble(self, flag):
-        if self.bubble_showing == False and flag == True:
-            self.bubble = Bubble(self.bubble_groups, self.rect.midtop, self.npc_type)
-            self.bubble_showing = True
-        elif self.bubble_showing == True and flag == False:
-            self.bubble.kill()
-            self.bubble_showing = False
+        if self.npc_type != "mesenev":
+            if self.bubble_showing == False and flag == True:
+                self.bubble = Bubble(
+                    self.bubble_groups,
+                    self.rect.topleft,
+                    self.root_image.get_size()[0],
+                    self.npc_type,
+                )
+                self.bubble_showing = True
+                config.IS_UPDATE = 2
+
+            elif self.bubble_showing == True and flag == False:
+                self.bubble.kill()
+                self.bubble_showing = False
 
     def interact(self):
         # check cooldown
@@ -52,7 +61,7 @@ class NPC(pygame.sprite.Sprite):
             self.buying_time = pygame.time.get_ticks()
 
             # buying
-            if self.npc_type == "woodcutter" and config.TREE_LEVEL < 3:
+            if self.npc_type == "woodcutter" and config.TREE_LEVEL < 2:
                 wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
                 if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
                     config.WOOD_AMOUNT -= wood
@@ -60,17 +69,39 @@ class NPC(pygame.sprite.Sprite):
                     config.TREE_LEVEL += 1
                     self.show_bubble(False)
                     self.show_bubble(True)
+                    config.IS_UPDATE = 2
+
+            if self.npc_type == "miner" and config.ROCK_LEVEL < 2:
+                wood, stone = GameData.MINER_UPGRADE[config.ROCK_LEVEL]
+                if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
+                    config.WOOD_AMOUNT -= wood
+                    config.STONE_AMOUNT -= stone
+                    config.ROCK_LEVEL += 1
+                    self.show_bubble(False)
+                    self.show_bubble(True)
+                    config.IS_UPDATE = 2
+
+            if self.npc_type == "laptop" and config.CATS_LEVEL < 2:
+                wood, stone = GameData.CATS_UPGRADE[config.CATS_LEVEL]
+                if config.WOOD_AMOUNT >= wood and config.STONE_AMOUNT >= stone:
+                    config.WOOD_AMOUNT -= wood
+                    config.STONE_AMOUNT -= stone
+                    config.CATS_LEVEL += 1
+                    self.show_bubble(False)
+                    self.show_bubble(True)
+                    config.IS_UPDATE = 2
+                    config.UPDATE_BG = 2
 
         if self.buying and current_time - self.buying_time >= self.cooldown:
             self.buying = False
 
 
 class Bubble(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, bubble_type):
+    def __init__(self, groups, pos, length, bubble_type):
         super().__init__(groups)
         self.bubble_type = bubble_type
         self.bubble_folder = config.PROJECT_FOLDER + "/graphics/gui/bubbles/0_bubble/"
-        self.position = pos
+        self.position = (pos[0], pos[1])
 
         # graphics
         self.surfaces = import_surfaces(self.bubble_folder)
@@ -78,19 +109,24 @@ class Bubble(pygame.sprite.Sprite):
         self.root_image = self.surfaces[0]
         self.image = self.root_image
 
-        self.rect = self.image.get_rect(midbottom=self.position)
+        self.rect = self.image.get_rect(
+            bottomleft=(
+                self.position[0] - (self.image.get_size()[0] - length) // 2,
+                self.position[1],
+            )
+        )
 
         # YSortGroup info
         self.ysort = self.rect
 
         font = pygame.font.Font(config.PROJECT_FOLDER + "/graphics/font/mago2.ttf", 16)
 
-        if self.bubble_type == "mesenev":
-            wood, stone = GameData.CATS_UPGRADE[config.CATS_LEVEL]
-        elif self.bubble_type == "woodcutter":
+        if self.bubble_type == "woodcutter":
             wood, stone = GameData.WOODCUTTER_UPGRADE[config.TREE_LEVEL]
         elif self.bubble_type == "miner":
             wood, stone = GameData.MINER_UPGRADE[config.ROCK_LEVEL]
+        elif self.bubble_type == "laptop":
+            wood, stone = GameData.CATS_UPGRADE[config.CATS_LEVEL]
 
         wood_surf = import_surface(
             config.PROJECT_FOLDER + "/graphics/gui/icons/wood.png"

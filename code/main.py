@@ -7,6 +7,7 @@ import sys
 from level import *
 from menu import *
 from settings import *
+from cutscene import *
 from phrases import *
 
 
@@ -39,6 +40,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.level = Level()
+        self.cutscene = CutScene()
 
     def run(self) -> None:
         # game loop
@@ -62,7 +64,12 @@ class Game:
                 Menu.developers(self.screen)
             else:
                 self.screen.fill("Light Blue")
-                self.level.run()
+
+                if config.IS_BEGIN:
+                    self.cutscene.run()
+                else:
+                    self.level.run()
+
                 if HotKeys.is_pressed(HotKeys.pause):
                     Menu.pause_menu_active = True
                 if Menu.pause_menu_active:
