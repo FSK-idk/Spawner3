@@ -41,12 +41,12 @@ class NPC(pygame.sprite.Sprite):
             if self.bubble_showing == False and flag == True:
                 self.bubble = Bubble(
                     self.bubble_groups,
-                    self.rect.midtop,
+                    self.rect.topleft,
+                    self.root_image.get_size()[0],
                     self.npc_type,
                 )
                 self.bubble_showing = True
                 config.IS_UPDATE = 2
-                print("topleft", self.rect.topleft)
 
             elif self.bubble_showing == True and flag == False:
                 self.bubble.kill()
@@ -97,7 +97,7 @@ class NPC(pygame.sprite.Sprite):
 
 
 class Bubble(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, bubble_type):
+    def __init__(self, groups, pos, length, bubble_type):
         super().__init__(groups)
         self.bubble_type = bubble_type
         self.bubble_folder = config.PROJECT_FOLDER + "/graphics/gui/bubbles/0_bubble/"
@@ -109,7 +109,12 @@ class Bubble(pygame.sprite.Sprite):
         self.root_image = self.surfaces[0]
         self.image = self.root_image
 
-        self.rect = self.image.get_rect(midbottom=self.position)
+        self.rect = self.image.get_rect(
+            bottomleft=(
+                self.position[0] - (self.image.get_size()[0] - length) // 2,
+                self.position[1],
+            )
+        )
 
         # YSortGroup info
         self.ysort = self.rect

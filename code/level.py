@@ -377,6 +377,14 @@ class AllSprites(pygame.sprite.Group):
                     ),
                 )
 
+                # if not isinstance(sprite, Background):
+                #     sprite.rect = sprite.image.get_rect(
+                #         midbottom=(
+                #             sprite.position[0],
+                #             sprite.position[1],
+                #         )
+                #     )
+
                 sprite.rect.width = (
                     sprite.root_image.get_size()[0] * AllSprites.resize_coeff
                 )
