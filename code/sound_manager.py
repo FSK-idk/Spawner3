@@ -1,49 +1,40 @@
 import pygame
-from settings import *
+
 from menu import *
+from game_state_manager import GameStateManager
+from game_data import GameData
+from save_data import save_data
 
 
 class SoundManager:
     def __init__(self) -> None:
         self.start_menu_active = True
-        self.level_name = "mountain"
-        self.volume = Menu.volume
+        self.name = "menu"
+        self.volume = SettingsMenu.volume
 
         self.change_music()
-        pygame.mixer.music.play(loops=-1)
-        pygame.mixer.music.set_volume(self.volume / 100.0)
 
-    def change_music(self):
-        if Menu.start_menu_active:
-            pygame.mixer.music.load(config.PROJECT_FOLDER + "/audio/menu.mp3")
-        else:
-            match config.CURRENT_LEVEL:
-                case "mountain":
-                    pygame.mixer.music.load(
-                        config.PROJECT_FOLDER + "/audio/mountain.mp3"
-                    )
-                case "cave":
-                    pygame.mixer.music.load(config.PROJECT_FOLDER + "/audio/cave.mp3")
-                case "cats":
-                    pygame.mixer.music.load(config.PROJECT_FOLDER + "/audio/cats.mp3")
-
+    def change_music(self) -> None:
+        pygame.mixer.music.load(
+            GameData.project_folder + f"/audio/{self.name}.mp3")
         pygame.mixer.music.set_volume(self.volume / 100.0)
         pygame.mixer.music.play(loops=-1)
 
-    def update(self):
-        if self.volume != Menu.volume:
-            self.volume = Menu.volume
+    def update(self) -> None:
+        if self.volume != SettingsMenu.volume:
+            self.volume = SettingsMenu.volume
             pygame.mixer.music.set_volume(self.volume / 100.0)
 
-        if not self.start_menu_active and Menu.start_menu_active:
-            self.start_menu_active = True
+        if (self.name == "menu"
+                and GameStateManager.current_state == "gameplay"):
+            self.name = save_data.current_level
             self.change_music()
-
-        if self.start_menu_active and not Menu.start_menu_active:
-            self.start_menu_active = False
+        elif (self.name != "menu"
+              and GameStateManager.current_state != "gameplay"):
+            self.name = "menu"
             self.change_music()
-
-        if not self.start_menu_active and not Menu.start_menu_active:
-            if self.level_name != config.CURRENT_LEVEL:
-                self.level_name = config.CURRENT_LEVEL
-                self.change_music()
+        elif (self.name != "menu"
+              and GameStateManager.current_state == "gameplay"
+              and self.name != save_data.current_level):
+            self.name = save_data.current_level
+            self.change_music()

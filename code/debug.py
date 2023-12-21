@@ -1,12 +1,10 @@
-# function for debugging
-
 import pygame
 
 pygame.init()
 font = pygame.font.Font(None, 30)
 
 
-def debug(info, y=10, x=10) -> None:
+def debug(info, y: int = 10, x: int = 10) -> None:
     display_surface = pygame.display.get_surface()
     debug_surf = font.render(str(info), True, "White")
     debug_rect = debug_surf.get_rect(topleft=(x, y))

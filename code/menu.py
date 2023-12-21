@@ -1,290 +1,331 @@
 import pygame
 import pygame_widgets
-import sys
-import pygame_widgets
 import webbrowser
-from tile import *
+
+from button import Button
 from pygame_widgets.slider import Slider
+from input_manager import InputManager
+from game_data import *
 
 
 class Menu:
-    start_menu_active = True
-    pause_menu_active = False
-    settings_active = False
-    developers_menu_active = False
+    def __init__(self, name: str, display: pygame.Surface) -> None:
+        self.name = name
+        self.display = display
 
+
+class MainMenu(Menu):
+    def __init__(self, name: str, display: pygame.Surface) -> None:
+        super().__init__(name, display)
+        width, height = self.display.get_size()
+
+        self.buttons_group = pygame.sprite.Group()
+
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/play.png",
+            (width / 2, height / 2),
+            "play")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/settings.png",
+            (width / 2, height / 6 * 3.67),
+            "settings")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/developers.png",
+            (width / 2, height / 4 * 2.87),
+            "developers")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/quit.png",
+            (width / 2, height / 4 * 3.3),
+            "quit")
+
+    def draw_background(self) -> None:
+        self.display.fill("Yellow")
+
+        text = GameData.font_lana100.render("Spawner3", False, "Black")
+        text_rect = text.get_rect(
+            center=(self.display.get_size()[0] / 2,
+                    self.display.get_size()[1] / 3))
+
+        self.display.blit(text, text_rect)
+
+    def draw(self) -> None:
+        self.draw_background()
+        self.buttons_group.draw(self.display)
+
+    def input(self) -> None:
+        pos = pygame.mouse.get_pos()
+
+        for sprite in self.buttons_group:
+            pos_in_mask = pos[0] - sprite.rect.x, pos[1] - sprite.rect.y
+
+            if (sprite.rect.collidepoint(*pos)
+                and sprite.mask.get_at(pos_in_mask)
+                    and InputManager.get_event(pygame.MOUSEBUTTONDOWN)):
+                match sprite.name:
+                    case "play":
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_STATE,
+                            state="gameplay",
+                            prev_state="main_menu"))
+                    case "settings":
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_STATE,
+                            state="settings",
+                            prev_state="main_menu"))
+                    case "developers":
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_STATE,
+                            state="developers",
+                            prev_state="main_menu"))
+                    case "quit":
+                        pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+    def update(self) -> None:
+        self.input()
+
+
+class SettingsMenu(Menu):
     volume = 100
 
-    pygame.font.init()
+    def __init__(self, name: str, display: pygame.Surface,
+                 prev_state: str) -> None:
+        super().__init__(name, display)
+        self.prev_state = prev_state
 
-    small_font = pygame.font.Font(
-        config.PROJECT_FOLDER + "/graphics/font/Clarity.ttf", 35
-    )
-    # small_font = pygame.font.SysFont("Corbel", 35)
+        width, height = self.display.get_size()
 
-    settings_screen = pygame.Surface((config.WIDTH, config.HEIGHT))
-    settings_screen.fill("Green")
+        self.buttons_group = pygame.sprite.Group()
 
-    slider = Slider(
-        settings_screen,
-        config.WIDTH // 2 - 200,
-        config.HEIGHT // 2,
-        400,
-        20,
-        min=0,
-        max=100,
-        step=1,
-    )
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/quit.png",
+            (width / 2, height / 4 * 3.3),
+            "quit")
 
-    @staticmethod
-    def pause_menu(screen) -> bool:
-        button_quit = pygame.image.load("../graphics/gui/buttons/quit.png")
-        button_continue = pygame.image.load("../graphics/gui/buttons/continue.png")
-        button_settings = pygame.image.load("../graphics/gui/buttons/settings.png")
+        self.slider = Slider(
+            self.display,
+            width // 2 - 200, height // 2,
+            400, 20,
+            min=0, max=100, step=1)
+        self.slider.value = SettingsMenu.volume
 
-        button_continue_rect = button_continue.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 2)
-        )
-        button_settings_rect = button_settings.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 6 * 3.75)
-        )
-        button_quit_rect = button_quit.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 4 * 3)
-        )
+    def draw_background(self) -> None:
+        self.display.fill("Yellow")
 
-        pause_menu = pygame.Surface((config.WIDTH, config.HEIGHT))
+        text = GameData.font_lana50.render("Звук", False, "Black")
+        text_rect = text.get_rect(
+            center=(self.display.get_size()[0] / 2,
+                    self.display.get_size()[1] / 3))
 
-        pause_menu.fill("black")
-        pause_menu.set_alpha(225)
+        self.display.blit(text, text_rect)
 
-        pause_menu.blit(button_continue, button_continue_rect)
-        pause_menu.blit(button_settings, button_settings_rect)
-        pause_menu.blit(button_quit, button_quit_rect)
+        volume_level = GameData.font_lana50.render(
+            f"{SettingsMenu.volume}%", False, "Black")
 
-        mouse = pygame.mouse.get_pos()
-        pressed = pygame.mouse.get_pressed()
+        self.display.blit(volume_level,
+                          (self.display.get_size()[0] / 2.13,
+                           self.display.get_size()[1] / 2.5))
 
-        for event in pygame.event.get():
-            if (
-                button_continue_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                return False
-            if (
-                button_settings_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                Menu.settings_active = True
-            if (
-                button_quit_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                Menu.start_menu_active = True
+    def draw(self) -> None:
+        self.draw_background()
+        self.buttons_group.draw(self.display)
 
-        screen.blit(pause_menu, (0, 0))
+    def input(self) -> None:
+        pos = pygame.mouse.get_pos()
 
-        pygame.display.update()
+        for sprite in self.buttons_group:
+            pos_in_mask = pos[0] - sprite.rect.x, pos[1] - sprite.rect.y
+            if (sprite.rect.collidepoint(pos)
+                and sprite.mask.get_at(pos_in_mask)
+                    and InputManager.get_event(pygame.MOUSEBUTTONDOWN)):
+                match sprite.name:
+                    case "quit":
+                        if self.prev_state == "main_menu":
+                            pygame.event.post(pygame.event.Event(
+                                UPDATE_STATE,
+                                state="main_menu",
+                                prev_state="settings"))
 
-        return True
+                        elif self.prev_state == "pause_menu":
+                            pygame.event.post(pygame.event.Event(
+                                UPDATE_STATE,
+                                state="pause_menu",
+                                prev_state="settings"))
 
-    @staticmethod
-    def start_menu(screen) -> bool:
-        # background = pygame.image.load('../graphics/gui/background/background.png')
-        button_play = pygame.image.load("../graphics/gui/buttons/play.png")
-        button_settings = pygame.image.load("../graphics/gui/buttons/settings.png")
-        button_developers = pygame.image.load("../graphics/gui/buttons/settings.png")
-        button_quit = pygame.image.load("../graphics/gui/buttons/quit.png")
+    def update(self) -> None:
+        SettingsMenu.volume = self.slider.getValue()
+        pygame_widgets.update(InputManager.events)
+        self.input()
 
-        button_play_rect = button_play.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 2)
-        )
-        button_settings_rect = button_settings.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 6 * 3.67)
-        )
-        button_developers_rect = button_developers.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 4 * 2.87)
-        )
-        button_quit_rect = button_quit.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 4 * 3.3)
-        )
 
-        main_menu = pygame.Surface((config.WIDTH, config.HEIGHT))
-        main_menu.fill("Green")
+class DevelopersMenu(Menu):
+    def __init__(self, name: str, display: pygame.Surface) -> None:
+        super().__init__(name, display)
+        width, height = self.display.get_size()
 
-        # font = pygame.font.Font(None, 72)
-        font = pygame.font.Font(
-            config.PROJECT_FOLDER + "/graphics/font/Clarity.ttf", 72
-        )
-        text = font.render("Spawner3", True, "Black")
-        text_rect = text.get_rect(center=(config.WIDTH / 2, config.HEIGHT / 3))
-        main_menu.blit(text, text_rect)
+        self.buttons_group = pygame.sprite.Group()
 
-        main_menu.blit(button_play, button_play_rect)
-        main_menu.blit(button_settings, button_settings_rect)
-        main_menu.blit(button_developers, button_developers_rect)
-        main_menu.blit(button_quit, button_quit_rect)
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/profile/profile1.png",
+            (width * 2 / 10, height * 7 / 17),
+            "profile1")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/profile/profile2.png",
+            (width * 4 / 10, height * 7 / 17),
+            "profile2")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/profile/profile3.png",
+            (width * 6 / 10, height * 7 / 17),
+            "profile3")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/profile/profile4.png",
+            (width * 8 / 10, height * 7 / 17),
+            "profile4")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/quit.png",
+            (width / 2, height / 4 * 3.3),
+            "quit")
 
-        mouse = pygame.mouse.get_pos()
+    def draw_background(self) -> None:
+        self.display.fill("Yellow")
 
-        for event in pygame.event.get():
-            if (
-                button_play_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                return False
-            if (
-                button_settings_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                Menu.settings_active = True
-            if (
-                button_developers_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                Menu.developers_menu_active = True
-            if (
-                button_quit_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                pygame.event.post(pygame.event.Event(pygame.QUIT))
+        text = GameData.font_lana50.render("Разработчики", False, "Black")
+        text_rect = text.get_rect(
+            center=(self.display.get_size()[0] / 2,
+                    self.display.get_size()[1] / 8))
 
-                # sys.exit()
+        self.display.blit(text, text_rect)
 
-        screen.blit(main_menu, (0, 0))
+        name_text1 = GameData.font_lana30.render(
+            "Симанков Александр", False, "Black")
+        name_text1_rect = name_text1.get_rect(
+            center=(
+                self.display.get_size()[0] * 2 / 10,
+                self.display.get_size()[1] * 11 / 17))
+        name_text2 = GameData.font_lana30.render(
+            "Рыбкин Владимир", False, "Black")
+        name_text2_rect = name_text2.get_rect(
+            center=(
+                self.display.get_size()[0] * 4 / 10,
+                self.display.get_size()[1] * 11 / 17))
+        name_text3 = GameData.font_lana30.render(
+            "Верхов Владимир", False, "Black")
+        name_text3_rect = name_text3.get_rect(
+            center=(
+                self.display.get_size()[0] * 6 / 10,
+                self.display.get_size()[1] * 11 / 17))
+        name_text4 = GameData.font_lana30.render(
+            "Можаров Дмитрий", False, "Black")
+        name_text4_rect = name_text4.get_rect(
+            center=(
+                self.display.get_size()[0] * 8 / 10,
+                self.display.get_size()[1] * 11 / 17))
 
-        pygame.display.update()
+        self.display.blit(name_text1, name_text1_rect)
+        self.display.blit(name_text2, name_text2_rect)
+        self.display.blit(name_text3, name_text3_rect)
+        self.display.blit(name_text4, name_text4_rect)
 
-        return True
+    def draw(self) -> None:
+        self.draw_background()
+        self.buttons_group.draw(self.display)
 
-    @staticmethod
-    def settings(screen) -> None:
-        Menu.volume = Menu.slider.getValue()
-        Menu.settings_screen.fill("Green")
-        # background = pygame.image.load('../graphics/gui/background/background.png')
-        button_quit = pygame.image.load("../graphics/gui/buttons/quit.png")
+    def input(self) -> None:
+        pos = pygame.mouse.get_pos()
 
-        # font = pygame.font.Font(None, 50)
-        font = pygame.font.Font(
-            config.PROJECT_FOLDER + "/graphics/font/Clarity.ttf", 50
-        )
-        text = font.render("Звук:", True, "Black")
-        text_rect = text.get_rect(center=(config.WIDTH / 2, config.HEIGHT / 3))
-        Menu.settings_screen.blit(text, text_rect)
+        for sprite in self.buttons_group:
+            pos_in_mask = pos[0] - sprite.rect.x, pos[1] - sprite.rect.y
+            if (sprite.rect.collidepoint(*pos)
+                and sprite.mask.get_at(pos_in_mask)
+                    and InputManager.get_event(pygame.MOUSEBUTTONDOWN)):
+                match sprite.name:
+                    case "profile1":
+                        webbrowser.open_new("https://github.com/Fotlex")
+                    case "profile2":
+                        webbrowser.open_new("https://github.com/FSK-idk")
+                    case "profile3":
+                        webbrowser.open_new("https://github.com/verhovv")
+                    case "profile4":
+                        webbrowser.open_new("https://github.com/dmitry416")
+                    case "quit":
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_STATE,
+                            state="main_menu",
+                            prev_state="developers"))
 
-        volume_level = font.render(f"{Menu.volume}%", True, "Black")
-        Menu.settings_screen.blit(
-            volume_level, (config.WIDTH / 2.13, config.HEIGHT / 2.5)
-        )
+    def update(self) -> None:
+        self.input()
 
-        button_quit_rect = button_quit.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 6 * 4)
-        )
-        Menu.settings_screen.blit(button_quit, button_quit_rect)
 
-        mouse = pygame.mouse.get_pos()
+class PauseMenu(Menu):
+    def __init__(self, name: str, display: pygame.Surface) -> None:
+        super().__init__(name, display)
 
-        for event in pygame.event.get():
-            if (
-                button_quit_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                Menu.settings_active = False
+        self.buttons_group = pygame.sprite.Group()
 
-        pygame_widgets.update(pygame.event.get())
+        width, height = self.display.get_size()
 
-        screen.blit(Menu.settings_screen, (0, 0))
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/play.png",
+            (width / 2, height / 2),
+            "continue")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/settings.png",
+            (width / 2, height / 6 * 3.75),
+            "settings")
+        Button(
+            [self.buttons_group],
+            GameData.project_folder + "/graphics/gui/buttons/quit.png",
+            (width / 2, height / 4 * 3),
+            "quit")
 
-        pygame.display.update()
+        self.shadow_surf = pygame.Surface(self.display.get_size())
+        self.shadow_surf.fill("Black")
+        self.shadow_surf.set_alpha(200)
+        self.shadow_rect = self.shadow_surf.get_rect()
 
-    @staticmethod
-    def developers(screen):
-        button_quit = pygame.image.load("../graphics/gui/buttons/quit.png")
+    def draw_background(self) -> None:
+        self.display.blit(self.shadow_surf, self.shadow_rect)
 
-        profile1 = pygame.image.load("../graphics/gui/profile/profile1.png")
-        profile2 = pygame.image.load("../graphics/gui/profile/profile2.png")
-        profile3 = pygame.image.load("../graphics/gui/profile/profile3.png")
-        profile4 = pygame.image.load("../graphics/gui/profile/profile4.png")
+    def draw(self) -> None:
+        self.draw_background()
+        self.buttons_group.draw(self.display)
 
-        profile1_rect = profile1.get_rect()
-        profile1_rect.x = config.WIDTH / 10
-        profile1_rect.y = config.WIDTH / 9
+    def input(self) -> None:
+        pos = pygame.mouse.get_pos()
 
-        profile2_rect = profile2.get_rect()
-        profile2_rect.x = config.WIDTH / 3.2
-        profile2_rect.y = config.WIDTH / 9
+        for sprite in self.buttons_group:
+            pos_in_mask = pos[0] - sprite.rect.x, pos[1] - sprite.rect.y
+            if (sprite.rect.collidepoint(*pos)
+                and sprite.mask.get_at(pos_in_mask)
+                    and InputManager.get_event(pygame.MOUSEBUTTONDOWN)):
+                match sprite.name:
+                    case "continue":
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_STATE,
+                            state="gameplay",
+                            prev_state="pause_menu"))
+                    case "settings":
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_STATE,
+                            state="settings",
+                            prev_state="pause_menu"))
+                    case "quit":
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_STATE,
+                            state="main_menu",
+                            prev_state="pause_menu"))
 
-        profile3_rect = profile3.get_rect()
-        profile3_rect.x = config.WIDTH / 1.9
-        profile3_rect.y = config.WIDTH / 9
-
-        profile4_rect = profile4.get_rect()
-        profile4_rect.x = config.WIDTH / 1.35
-        profile4_rect.y = config.WIDTH / 9
-
-        button_quit_rect = button_quit.get_rect(
-            center=(config.WIDTH / 2, config.HEIGHT / 6 * 4)
-        )
-
-        font = pygame.font.Font(None, 50)
-        small_font = pygame.font.Font(None, 35)
-
-        text = font.render("Разработчики:", True, "Black")
-        text_rect = text.get_rect(center=(config.WIDTH / 2, config.HEIGHT / 8))
-
-        name_text1 = small_font.render("Симанков Александр", True, "Black")
-        name_text1_rect = name_text1.get_rect()
-        name_text1_rect.x = config.WIDTH / 10
-        name_text1_rect.y = config.WIDTH / 3.2
-
-        name_text2 = small_font.render("Рыбкин Владимир", True, "Black")
-        name_text2_rect = name_text1.get_rect()
-        name_text2_rect.x = config.WIDTH / 3.2
-        name_text2_rect.y = config.WIDTH / 3.2
-
-        name_text3 = small_font.render("Верхов Владимир", True, "Black")
-        name_text3_rect = name_text1.get_rect()
-        name_text3_rect.x = config.WIDTH / 1.9
-        name_text3_rect.y = config.WIDTH / 3.2
-
-        name_text4 = small_font.render("Можаров Дмитрий", True, "Black")
-        name_text4_rect = name_text1.get_rect()
-        name_text4_rect.x = config.WIDTH / 1.35
-        name_text4_rect.y = config.WIDTH / 3.2
-
-        developers_menu = pygame.Surface((config.WIDTH, config.HEIGHT))
-        developers_menu.fill("Green")
-
-        developers_menu.blit(button_quit, button_quit_rect)
-        developers_menu.blit(text, text_rect)
-
-        developers_menu.blit(name_text1, name_text1_rect)
-        developers_menu.blit(name_text2, name_text2_rect)
-        developers_menu.blit(name_text3, name_text3_rect)
-        developers_menu.blit(name_text4, name_text4_rect)
-
-        developers_menu.blit(profile1, profile1_rect)
-        developers_menu.blit(profile2, profile2_rect)
-        developers_menu.blit(profile3, profile3_rect)
-        developers_menu.blit(profile4, profile4_rect)
-
-        mouse = pygame.mouse.get_pos()
-
-        for event in pygame.event.get():
-            if (
-                button_quit_rect.collidepoint(mouse)
-                and event.type == pygame.MOUSEBUTTONUP
-            ):
-                Menu.developers_menu_active = False
-
-            if profile1_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
-                webbrowser.open_new("https://github.com/Fotlex")
-            if profile2_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
-                webbrowser.open_new("https://github.com/FSK-idk")
-            if profile3_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
-                webbrowser.open_new("https://github.com/verhovv")
-            if profile4_rect.collidepoint(mouse) and event.type == pygame.MOUSEBUTTONUP:
-                webbrowser.open_new("https://github.com/dmitry416")
-
-        screen.blit(developers_menu, (0, 0))
-
-        pygame.display.update()
+    def update(self) -> None:
+        self.input()

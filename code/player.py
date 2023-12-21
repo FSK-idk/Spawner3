@@ -1,38 +1,38 @@
-# player class
-
 import pygame
-from menu import *
-from npc import *
-from settings import *
-from tile import *
-from utils import *
+
 from collections import defaultdict
+from utils import *
+from npc import NPC
+from tile import TeleportSprite, InteractiveSprite
+import game_state_manager as gsm
+from input_manager import InputManager
+from game_data import *
+from save_data import save_data
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacle_sprites) -> None:
+    def __init__(self, groups: list, pos: (int, int),
+                 obstacle_sprites: pygame.sprite.Group) -> None:
         super().__init__(groups)
-        self.player_folder = config.PROJECT_FOLDER + "/graphics/sprites/player/"
+        self.folder = GameData.project_folder + "/graphics/sprites/player/"
 
-        # graphics
-        self.image = import_surface(
-            self.player_folder + "animation/idle/right/forward/idle right forward 1.png"
-        )
-        self.root_image = self.image
-
+        # image
+        self.root_image = import_surface(
+            self.folder + "animation/idle/right/forward/idle right forward 1.png")
+        self.image = self.root_image
         self.rect = self.image.get_rect(midbottom=pos)
 
-        # YSortGroup info
-        self.ysort = import_ysort(self.player_folder)
+        # sort
+        self.ysort = import_ysort(self.folder + "ysort.png")
         self.ysort.midtop = self.rect.midtop
 
         # collision
         self.obstacle_sprites = obstacle_sprites
-        self.mask = import_mask(self.player_folder, "mask")
+        self.mask = import_mask(self.folder + "mask.png")
 
         # movement
         self.direction = pygame.math.Vector2()
-        self.speed = 3.425  # ! do not change. rounding
+        self.speed = 3.425
 
         # animation
         self.frame_rate = 6
@@ -44,44 +44,33 @@ class Player(pygame.sprite.Sprite):
             "y_direction": "forward",
         }
 
-        # action -> x direction -> y direction
-        self.animation_images = defaultdict(
-            lambda: defaultdict(lambda: defaultdict(list))
-        )
-
-        for act in ["run", "idle"]:
-            for x_dir in ["right", "left"]:
-                for y_dir in ["forward", "back"]:
-                    self.animation_images[act][x_dir][y_dir] = import_surfaces(
-                        self.player_folder + "animation/" + f"{act}/{x_dir}/{y_dir}"
-                    )
         self.root_animation_images = defaultdict(
-            lambda: defaultdict(lambda: defaultdict(list))
-        )
+            lambda: defaultdict(lambda: defaultdict(list)))
+        self.animation_images = defaultdict(
+            lambda: defaultdict(lambda: defaultdict(list)))
 
         for act in ["run", "idle"]:
             for x_dir in ["right", "left"]:
                 for y_dir in ["forward", "back"]:
                     self.root_animation_images[act][x_dir][y_dir] = import_surfaces(
-                        self.player_folder + "animation/" + f"{act}/{x_dir}/{y_dir}"
-                    )
+                        self.folder + "animation/" +
+                        f"{act}/{x_dir}/{y_dir}")
 
-    def input(self) -> None:
-        self.change_direction()
-        self.change_animation_state()
+                    self.animation_images[act][x_dir][y_dir] = \
+                        self.root_animation_images[act][x_dir][y_dir].copy()
 
     def change_direction(self) -> None:
-        if not Menu.pause_menu_active:
-            if HotKeys.is_pressed(HotKeys.go_left):
+        if gsm.GameStateManager.current_state == "gameplay":
+            if InputManager.is_pressed(InputManager.go_left):
                 self.direction.x = -1
-            elif HotKeys.is_pressed(HotKeys.go_right):
+            elif InputManager.is_pressed(InputManager.go_right):
                 self.direction.x = 1
             else:
                 self.direction.x = 0
 
-            if HotKeys.is_pressed(HotKeys.go_up):
+            if InputManager.is_pressed(InputManager.go_up):
                 self.direction.y = -1
-            elif HotKeys.is_pressed(HotKeys.go_down):
+            elif InputManager.is_pressed(InputManager.go_down):
                 self.direction.y = 1
             else:
                 self.direction.y = 0
@@ -102,64 +91,54 @@ class Player(pygame.sprite.Sprite):
         elif self.direction.y < 0:
             self.animation_state["y_direction"] = "back"
 
+    def input(self) -> None:
+        if InputManager.is_pressed(InputManager.pause):
+            pygame.event.post(pygame.event.Event(
+                UPDATE_STATE,
+                state="pause_menu",
+                prev_state="gameplay"))
+
+        self.change_direction()
+        self.change_animation_state()
+
     def animate(self) -> None:
-        # get list of animations
         act = self.animation_state["action"]
         x_dir = self.animation_state["x_direction"]
         y_dir = self.animation_state["y_direction"]
-
         animations = self.animation_images[act][x_dir][y_dir]
 
         # change frame index
-        self.frame_index += self.frame_rate / config.FPS
+        self.frame_index += self.frame_rate / save_data.fps
         if self.frame_index >= len(animations):
             self.frame_index = 0
 
-        # set image
         self.image = animations[int(self.frame_index)]
 
-    def move(self) -> None:
-        # normalize vector by ellipse
-        if self.direction.magnitude() != 0:
-            self.direction = self.direction.normalize()
-            self.direction.y /= 2  # isometry
-
-        # change player position
-        self.rect.x += self.direction.x * self.speed
-        self.check_collision("general")
-        self.check_collision("horizontal")
-        self.rect.y += self.direction.y * self.speed
-        self.check_collision("general")
-        self.check_collision("vertical")
-        self.ysort.midtop = self.rect.midtop
-
-    def check_collision(self, type) -> None:
+    def check_collision(self, type: str) -> None:
         if type == "general":
             for sprite in self.obstacle_sprites:
-                if isinstance(sprite, TeleportTile) and pygame.sprite.collide_mask(
-                    sprite, self
-                ):
+                if (isinstance(sprite, TeleportSprite)
+                        and pygame.sprite.collide_mask(sprite, self)):
                     sprite.teleport()
 
-                if isinstance(sprite, InteractiveTile) and HotKeys.is_pressed(
-                    HotKeys.interact
-                ):
-                    # check collision with mask functions
+                if (isinstance(sprite, InteractiveSprite)
+                        and InputManager.is_pressed(InputManager.interact)):
                     xoffset = self.rect[0] - sprite.rect[0]
                     yoffset = self.rect[1] - sprite.rect[1]
-                    if sprite.interact_mask.overlap(self.mask, (xoffset, yoffset)):
+                    if sprite.interact_mask.overlap(
+                            self.mask, (xoffset, yoffset)):
                         sprite.interact()
 
                 if isinstance(sprite, NPC):
-                    # check collision with mask functions
                     xoffset = self.rect[0] - sprite.rect[0]
                     yoffset = self.rect[1] - sprite.rect[1]
-                    if sprite.interact_mask.overlap(self.mask, (xoffset, yoffset)):
-                        sprite.show_bubble(True)
-                        if HotKeys.is_pressed(HotKeys.interact):
+                    if sprite.interact_mask.overlap(
+                            self.mask, (xoffset, yoffset)):
+                        sprite.collide(True)
+                        if InputManager.is_pressed(InputManager.interact):
                             sprite.interact()
                     else:
-                        sprite.show_bubble(False)
+                        sprite.collide(False)
 
         if type == "horizontal":
             for sprite in self.obstacle_sprites:
@@ -176,6 +155,22 @@ class Player(pygame.sprite.Sprite):
                         self.rect.top -= self.direction.y * self.speed
                     if self.direction.y > 0:  # move down
                         self.rect.bottom -= self.direction.y * self.speed
+
+    def move(self) -> None:
+        # normalize vector by ellipse
+        if self.direction.magnitude() != 0:
+            self.direction = self.direction.normalize()
+            self.direction.y /= 2  # isometry
+
+        self.rect.x += self.direction.x * self.speed
+        self.check_collision("general")
+        self.check_collision("horizontal")
+
+        self.rect.y += self.direction.y * self.speed
+        self.check_collision("general")
+        self.check_collision("vertical")
+
+        self.ysort.midtop = self.rect.midtop
 
     def update(self) -> None:
         self.input()

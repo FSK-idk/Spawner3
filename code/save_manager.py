@@ -1,23 +1,25 @@
 import pickle
-from settings import *
+
+from game_data import GameData
+from save_data import save_data
 
 
 class SaveManager:
     def __init__(self):
         self.load()
 
-    def load(self):
+    def load(self) -> None:
         try:
-            with open(config.PROJECT_FOLDER + "/data/config.txt", "rb") as f:
-                conf: Config = pickle.load(f)
+            with open(GameData.project_folder + "/data/config.txt", "rb") as f:
+                load_data = pickle.load(f)
 
-                for attr in vars(conf).keys():
-                    setattr(config, attr, getattr(conf, attr))
+                for attr in vars(load_data).keys():
+                    setattr(save_data, attr, getattr(load_data, attr))
 
         except:
-            with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
-                pickle.dump(config, f)
+            with open(GameData.project_folder + "/data/config.txt", "wb") as f:
+                pickle.dump(save_data, f)
 
-    def save(self):
-        with open(config.PROJECT_FOLDER + "/data/config.txt", "wb") as f:
-            pickle.dump(config, f)
+    def save(self) -> None:
+        with open(GameData.project_folder + "/data/config.txt", "wb") as f:
+            pickle.dump(save_data, f)
