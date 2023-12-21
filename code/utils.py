@@ -1,13 +1,15 @@
-# support functions for working with files
-
 import pygame
+
 from csv import reader
 from os import walk
 from os.path import dirname, abspath
 
 
-# path to csv file
-def import_csv_layout(path) -> list:
+def import_csv_layout(path: str) -> list:
+    """
+    Args:
+        path: path to a .csv file with the extension
+    """
     layout = []
 
     with open(path) as level_layout:
@@ -18,8 +20,7 @@ def import_csv_layout(path) -> list:
     return layout
 
 
-# better import
-def import_layouts(level_name, layers) -> dict:
+def import_layouts(level_name: str, layers: str) -> dict:
     layouts = {}
 
     for layer in layers:
@@ -30,8 +31,11 @@ def import_layouts(level_name, layers) -> dict:
     return layouts
 
 
-# path to the folder containing sprites
-def import_surfaces(path) -> list:
+def import_surfaces(path: str) -> list:
+    """
+    Args:
+        path: path to the folder where the images are stored
+    """
     surf_list = []
 
     for _, __, image_files in walk(path):
@@ -43,31 +47,39 @@ def import_surfaces(path) -> list:
     return surf_list
 
 
-# path to the sprite
-def import_surface(path):
+def import_surface(path: str) -> pygame.Surface:
+    """
+    Args:
+        path: path to the image with extension
+    """
     surf = pygame.image.load(path).convert_alpha()
     return surf
 
 
-# path to the folder with the mask, mask file name without extension
-def import_mask(path, name):
-    full_path = path + name + ".png"
-    mask = pygame.mask.from_surface(pygame.image.load(full_path).convert_alpha())
+def import_mask(path: str) -> pygame.Surface:
+    """
+    Args:
+        path: path to the image with extension
+    """
+    mask = pygame.mask.from_surface(
+        pygame.image.load(path).convert_alpha())
     return mask
 
 
-def import_mask_path(full_path):
-    mask = pygame.mask.from_surface(pygame.image.load(full_path).convert_alpha())
-    return mask
-
-
-# path to the folder with the ysort
-def import_ysort(path):
-    full_path = path + "ysort.png"
-    ysort = pygame.image.load(full_path).convert_alpha().get_rect()
+def import_ysort(path: str) -> pygame.rect.Rect:
+    """
+    Args:
+        path: path to the image with extension
+    """
+    ysort = pygame.image.load(path).convert_alpha().get_rect()
 
     return ysort
 
 
-def get_parent_dir(path=__file__) -> str:
+def get_parent_dir(path: str = __file__) -> str:
+    """
+    Args:
+        path: path to the file whose folder is needed
+
+    """
     return dirname(dirname(abspath(path)))

@@ -1,72 +1,71 @@
+import pygame
+
+from level import Level
+from cutscene import Cutscene
 from menu import *
-from cutscene import *
-from level import *
 
 
 class State:
-    def __init__(self, name, display) -> None:
+    def __init__(self, name: str, display: pygame.Surface) -> None:
         self.name = name
         self.display = display
-        self.prev_state = None
 
 
 class LevelState(State):
     def __init__(self, name, display) -> None:
         super().__init__(name, display)
 
-    def enter_state(self, prev_state):
+    def enter_state(self, prev_state: str) -> None:
         self.level = Level(self.name, self.display)
 
-    def exit_state(self):
+    def exit_state(self) -> None:
         del self.level
 
-    def update(self):
-        pass
+    def draw(self) -> None:
+        self.level.draw()
 
-    def update_level(self, name):
-        self.level.change_level(name)
-
-    def run(self):
-        if self.name != "gameplay":
-            self.level.run()
+    def run(self) -> None:
+        self.draw()
 
 
 class CutsceneState(State):
-    def __init__(self, name, display) -> None:
+    def __init__(self, name: str, display: pygame.Surface) -> None:
         super().__init__(name, display)
 
-    def enter_state(self, prev_state):
+    def enter_state(self, prev_state: str) -> None:
         self.cutscene = Cutscene(self.name, self.display)
 
-    def exit_state(self):
+    def exit_state(self) -> None:
         del self.cutscene
 
-    def update(self):
-        pass
+    def draw(self) -> None:
+        self.cutscene.draw()
 
-    def run(self):
-        self.cutscene.run()
+    def run(self) -> None:
+        self.draw()
 
 
 class MenuState(State):
-    def __init__(self, name, display) -> None:
+    def __init__(self, name: str, display: pygame.Surface) -> None:
         super().__init__(name, display)
 
-    def enter_state(self, prev_state):
-        if self.name == "main_menu":
-            self.menu = MainMenu(self.name, self.display)
-        elif self.name == "settings":
-            self.menu = SettingsMenu(self.name, self.display, prev_state)
-        elif self.name == "developers":
-            self.menu = DevelopersMenu(self.name, self.display)
-        elif self.name == "pause_menu":
-            self.menu = PauseMenu(self.name, self.display)
+    def enter_state(self, prev_state: str) -> None:
+        match self.name:
+            case "main_menu":
+                self.menu = MainMenu(self.name, self.display)
+            case "settings":
+                self.menu = SettingsMenu(self.name, self.display, prev_state)
+            case "developers":
+                self.menu = DevelopersMenu(self.name, self.display)
+            case "pause_menu":
+                self.menu = PauseMenu(self.name, self.display)
 
-    def exit_state(self):
+    def exit_state(self) -> None:
         del self.menu
 
-    def update(self):
-        pass
+    def draw(self) -> None:
+        self.menu.draw()
 
-    def run(self):
-        self.menu.run()
+    def run(self) -> None:
+        self.draw()
+        self.menu.update()

@@ -1,46 +1,44 @@
-# game start
-
 import pygame
-import sys
 
-from game_state_manager import *
-from save_manager import *
-from sound_manager import *
+from sys import exit
+from save_manager import SaveManager
+from game_state_manager import GameStateManager
+from sound_manager import SoundManager
+from input_manager import InputManager
+from save_data import save_data
 
 
 class Game:
     def __init__(self) -> None:
-        # general setup
         pygame.init()
 
-        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
+        self.display = pygame.display.set_mode(
+            (save_data.screen_width, save_data.screen_height))
         pygame.display.set_caption("Spawner3")
-        pygame.display.update()
 
         self.clock = pygame.time.Clock()
 
-        self.game_state_manager = GameStateManager(self.screen)
         self.save_manager = SaveManager()
+        self.game_state_manager = GameStateManager(self.display)
         self.sound_manager = SoundManager()
 
     def run(self) -> None:
-        # game loop
         while True:
             self.handle_events()
             self.game_state_manager.update()
             self.sound_manager.update()
+
             pygame.display.update()
-            self.clock.tick(config.FPS)
+            self.clock.tick(save_data.fps)
 
-    def handle_events(self):
-        HotKeys.events = list(pygame.event.get().copy())
+    def handle_events(self) -> None:
+        InputManager.events = list(pygame.event.get().copy())
 
-        if HotKeys.get_event(pygame.QUIT):
-            #  save
+        if InputManager.get_event(pygame.QUIT):
             self.save_manager.save()
 
             pygame.quit()
-            sys.exit()
+            exit()
 
 
 if __name__ == "__main__":
