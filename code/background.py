@@ -1,7 +1,7 @@
 # background image
 
 import pygame
-from settings import *
+from utils import *
 
 
 class Background(pygame.sprite.Sprite):

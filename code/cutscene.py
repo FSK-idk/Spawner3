@@ -44,7 +44,7 @@ class Cutscene:
         if self.index == len(self.images):
             pygame.event.post(
                 pygame.event.Event(
-                    UPDATE_STATE, state="mountain", prev_state="begin_cutscene"
+                    UPDATE_STATE, state="gameplay", prev_state="begin_cutscene"
                 )
             )
 

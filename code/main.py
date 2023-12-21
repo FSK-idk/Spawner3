@@ -1,19 +1,11 @@
 # game start
 
 import pygame
-
-pygame.init()
-
 import sys
 
-from level import *
-from menu import *
-from settings import *
-from cutscene import *
-from phrases import *
+from game_state_manager import *
 from save_manager import *
 from sound_manager import *
-from game_state_manager import *
 
 
 class Game:

@@ -1,7 +1,7 @@
 # game constants
 
 import pygame
-from utils import *
+from utils import get_parent_dir
 
 pygame.font.init()
 

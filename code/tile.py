@@ -1,6 +1,7 @@
 # basic tiles of the game
 
 import pygame
+from utils import *
 from settings import *
 
 

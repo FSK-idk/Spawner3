@@ -1,13 +1,12 @@
 # player class
 
 import pygame
-from menu import *
-from npc import *
 from settings import *
+from npc import *
 from tile import *
 from utils import *
+import game_state_manager
 from collections import defaultdict
-from phrases import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -80,7 +79,7 @@ class Player(pygame.sprite.Sprite):
         self.change_animation_state()
 
     def change_direction(self) -> None:
-        if not Menu.pause_menu_active:
+        if game_state_manager.GameStateManager.current_state == "gameplay":
             if HotKeys.is_pressed(HotKeys.go_left):
                 self.direction.x = -1
             elif HotKeys.is_pressed(HotKeys.go_right):

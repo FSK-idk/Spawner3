@@ -4,6 +4,7 @@ import pygame
 
 from phrases import TextCloud
 from settings import *
+from utils import *
 import random
 
 

@@ -1,10 +1,7 @@
-import math
 import time
-
 import pygame
 from settings import config
 
-from menu import Menu
 
 pygame.font.init()
 
