@@ -12,7 +12,8 @@ from debug import debug
 
 
 class Level:
-    def __init__(self) -> None:
+    def __init__(self, name, display) -> None:
+        # self.n = name
         # general setup
         self.display_surface = pygame.display.get_surface()
 
@@ -25,7 +26,7 @@ class Level:
         HUD([self.hud_sprites], self.display_surface)
 
         # level info
-        self.name = "mountain"
+        self.name = name
 
         # map setup
         self.create_map()
@@ -64,6 +65,12 @@ class Level:
                 config.PROJECT_FOLDER
                 + f"/graphics/background_images/{config.CATS_LEVEL}_{self.name}.png",
             )
+
+        self.player = Player(
+            config.PLAYER_POS,
+            [self.all_sprites, self.visible_sprites],
+            self.obstacle_sprites,
+        )
 
         # in each layout add new tiles in our groups
         for layer, layout in layouts.items():
@@ -168,6 +175,7 @@ class Level:
                                     path,
                                     (x, y),
                                     "teleport_" + sprite_type[int(val)],
+                                    self.name,
                                 )
 
                         case "magic_trees":
@@ -220,24 +228,18 @@ class Level:
                                     sprite_type[int(val)],
                                 )
 
-        self.player = Player(
-            config.PLAYER_POS,
-            [self.all_sprites, self.visible_sprites],
-            self.obstacle_sprites,
-        )
-
         self.all_sprites.update_sprites()
 
-    def change_level(self):
-        if config.CURRENT_LEVEL != self.name:
-            self.name = config.CURRENT_LEVEL
+    def change_level(self, name):
+        if self.name != name:
+            self.name = name
             self.all_sprites.empty()
             self.visible_sprites.empty()
             self.obstacle_sprites.empty()
+            self.background.kill()
             self.create_map()
 
     def run(self) -> None:
-        self.change_level()
         self.all_sprites.run()
         self.visible_sprites.custom_draw(self.player, self.background)
         self.visible_sprites.update()

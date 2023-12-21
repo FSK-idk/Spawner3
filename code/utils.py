@@ -56,6 +56,11 @@ def import_mask(path, name):
     return mask
 
 
+def import_mask_path(full_path):
+    mask = pygame.mask.from_surface(pygame.image.load(full_path).convert_alpha())
+    return mask
+
+
 # path to the folder with the ysort
 def import_ysort(path):
     full_path = path + "ysort.png"

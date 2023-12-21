@@ -3,8 +3,9 @@ from settings import *
 from utils import *
 
 
-class CutScene:
-    def __init__(self):
+class Cutscene:
+    def __init__(self, name, display):
+        self.name = name
         self.display_surface = pygame.display.get_surface()
 
         self.images = import_surfaces(
@@ -41,6 +42,10 @@ class CutScene:
                 self.contining = False
 
         if self.index == len(self.images):
-            config.IS_BEGIN = False
+            pygame.event.post(
+                pygame.event.Event(
+                    UPDATE_STATE, state="mountain", prev_state="begin_cutscene"
+                )
+            )
 
         pass

@@ -3,6 +3,18 @@
 import pygame
 from utils import *
 
+pygame.font.init()
+
+UPDATE_STATE = pygame.USEREVENT + 1
+UPDATE_GAMEPLAY_STATE = pygame.USEREVENT + 2
+
+
+class SaveData:
+    show_cutscene = True
+
+
+save_data = SaveData()
+
 
 class Config:
     FLAG = False
@@ -12,7 +24,7 @@ class Config:
     TILE_SIZE = 32
     PROJECT_FOLDER = get_parent_dir()
 
-    CURRENT_LEVEL = "cats"
+    # CURRENT_LEVEL = "cats"
     PLAYER_POS = (500, 450)
 
     WOOD_AMOUNT = 0
@@ -30,6 +42,9 @@ class Config:
     QUEUE = []
 
 
+config = Config()
+
+
 class GameData:
     # wood - stone
     WOODCUTTER_UPGRADE = [(20, 0), (500, 600), (900, 1000)]
@@ -38,6 +53,18 @@ class GameData:
 
     WOOD_GAIN = [1, 20, 50, 100]
     STONE_GAIN = [1, 20, 50, 100]
+
+    font_lana100 = pygame.font.Font(
+        config.PROJECT_FOLDER + "/graphics/font/LanaPixel.ttf", 100
+    )
+
+    font_lana50 = pygame.font.Font(
+        config.PROJECT_FOLDER + "/graphics/font/LanaPixel.ttf", 50
+    )
+
+    font_lana30 = pygame.font.Font(
+        config.PROJECT_FOLDER + "/graphics/font/LanaPixel.ttf", 30
+    )
 
 
 class HotKeys:
@@ -51,10 +78,16 @@ class HotKeys:
     go_up = [pygame.K_UP, pygame.K_w]
     go_down = [pygame.K_DOWN, pygame.K_s]
 
+    events = []
+
     @staticmethod
     def is_pressed(codes: list[int]) -> bool:
         keys = pygame.key.get_pressed()
         return any(map(lambda key: keys[key], codes))
 
-
-config = Config()
+    @staticmethod
+    def get_event(type):
+        for event in HotKeys.events:
+            if event.type == type:
+                return event
+        return None

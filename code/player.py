@@ -7,11 +7,13 @@ from settings import *
 from tile import *
 from utils import *
 from collections import defaultdict
+from phrases import *
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacle_sprites) -> None:
         super().__init__(groups)
+        # self.bubble_groups = bubble_groups
         self.player_folder = config.PROJECT_FOLDER + "/graphics/sprites/player/"
 
         # graphics
@@ -67,6 +69,13 @@ class Player(pygame.sprite.Sprite):
                     )
 
     def input(self) -> None:
+        if HotKeys.is_pressed(HotKeys.pause):
+            pygame.event.post(
+                pygame.event.Event(
+                    UPDATE_STATE, state="pause_menu", prev_state="gameplay"
+                )
+            )
+
         self.change_direction()
         self.change_animation_state()
 
@@ -177,7 +186,29 @@ class Player(pygame.sprite.Sprite):
                     if self.direction.y > 0:  # move down
                         self.rect.bottom -= self.direction.y * self.speed
 
+    # mesenev_cloud = None
+    # mesenev_phrases = ["Спасибо за внимание!"]
+
     def update(self) -> None:
         self.input()
         self.animate()
         self.move()
+
+        # show player text
+
+        # if HotKeys.is_pressed([pygame.K_p]):
+        #     if self.mesenev_cloud:
+        #         self.mesenev_cloud.kill()
+
+        #     self.mesenev_cloud = TextCloud(
+        #         random.choice(self.mesenev_phrases),
+        #         self.bubble_groups,
+        #         (
+        #             self.rect.left + self.root_image.get_size()[0] // 2,
+        #             self.rect.top,
+        #         ),
+        #     )
+        #     config.IS_UPDATE = 2
+
+        # if self.mesenev_cloud:
+        #     self.mesenev_cloud.run()

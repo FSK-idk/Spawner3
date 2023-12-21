@@ -30,25 +30,46 @@ class Tile(pygame.sprite.Sprite):
 
 
 class TeleportTile(Tile):
-    def __init__(self, groups, path, pos, sprite_type) -> None:
+    def __init__(self, groups, path, pos, sprite_type, level_name) -> None:
         super().__init__(groups, path, pos)
-
         self.sprite_type = sprite_type
+        self.level_name = level_name
 
     def teleport(self):
         # change level name and player position
         if self.sprite_type == "teleport_mountain":
-            if config.CURRENT_LEVEL == "cave":
-                config.PLAYER_POS = (400, 150)
-            if config.CURRENT_LEVEL == "cats":
+            if self.level_name == "cave":
+                config.PLAYER_POS = (200, 200)
+
+            if self.level_name == "cats":
                 config.PLAYER_POS = (500, 325)
-            config.CURRENT_LEVEL = "mountain"
+
+            pygame.event.post(
+                pygame.event.Event(
+                    UPDATE_GAMEPLAY_STATE,
+                    state="mountain",
+                    prev_state=self.level_name,
+                )
+            )
+
+            # config.CURRENT_LEVEL = "mountain"
         if self.sprite_type == "teleport_cave":
-            config.CURRENT_LEVEL = "cave"
             config.PLAYER_POS = (350, 550)
+
+            pygame.event.post(
+                pygame.event.Event(
+                    UPDATE_GAMEPLAY_STATE, state="cave", prev_state=self.level_name
+                )
+            )
+
         if self.sprite_type == "teleport_cats":
-            config.CURRENT_LEVEL = "cats"
             config.PLAYER_POS = (500, 450)
+
+            pygame.event.post(
+                pygame.event.Event(
+                    UPDATE_GAMEPLAY_STATE, state="cats", prev_state=self.level_name
+                )
+            )
 
 
 class InteractiveTile(Tile):
