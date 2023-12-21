@@ -8,7 +8,7 @@ class SoundManager:
     def __init__(self) -> None:
         self.start_menu_active = True
         self.name = "menu"
-        self.volume = Menu.volume
+        self.volume = SettingsMenu.volume
 
         self.change_music()
 
