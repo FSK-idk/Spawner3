@@ -1,17 +1,34 @@
 # Spawner3
 
-A game for the basics of project activities.
+A game on the basics of project activities at the university.
 
-## Resources
+## Story
 
-- Learn git
+Once, during one lesson on “Introduction to Algorithms and Data Structures”, Pavel Rostislavovich decided to talk about his problem. Spawner2 stopped working for him! Since Pavel is a very busy person, he decided to give his students a task: to create Spawner3. You, as one of them, decided to take it seriously and went to Mount Pidan. Mount Pidan is the place where many mythical artifacts are found. The future Spawner must last a long time and without the use of materials such as money tree or science granite, this will not be possible. You will meet the inhabitants of Pidan and create Spawner3 almost from scratch. You have your pick and ax with you. Forward, towards enlightenment!
 
-https://www.youtube.com/watch?v=RGOj5yH7evk
+## Installation
 
-- Pygame basics
+Install python, as well as additional components for it. These are pygame and pygame_widgets.
 
-https://www.youtube.com/watch?v=AY9MnQ4x3zk&t=12068s
+* [python](https://www.python.org/downloads) `>= 3.11`
+* [pygame](https://pypi.org/project/pygame/) `>= 2.5.2`
+* [pygame_widgets](https://pypi.org/project/pygame-widgets/) `>= 1.1.4`
 
-- Also check this channel
+Clone the repository using the command:
 
-https://www.youtube.com/@ClearCode
+```git clone https://github.com/FSK-idk/Spawner3.git```
+
+After that, go to the command line and navigate to the project folder.
+
+To start the game enter the following commands:
+
+```cd code```
+```python main.py```
+
+And welcome to the game!
+
+## License
+
+MIT License
+
+Copyright (c) 2023 FSK
