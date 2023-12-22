@@ -282,7 +282,7 @@ class PauseMenu(Menu):
 
         Button(
             [self.buttons_group],
-            GameData.project_folder + "/graphics/gui/buttons/play.png",
+            GameData.project_folder + "/graphics/gui/buttons/continue.png",
             (width / 2, height / 2),
             "continue")
         Button(
