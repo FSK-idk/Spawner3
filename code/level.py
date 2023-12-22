@@ -204,10 +204,10 @@ class Level:
     def draw(self) -> None:
         self.update_level()
 
+        self.update_background()
+
         self.zoom_group.run()
         self.zoom_group.update_list()
-
-        self.update_background()
 
         self.visible_sprites.draw(self.player, self.background)
         self.visible_sprites.update()

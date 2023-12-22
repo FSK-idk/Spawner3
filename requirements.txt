@@ -1,0 +1,7 @@
+attrs==22.2.0
+cffi==1.16.0
+cryptography==41.0.5
+packaging==23.2
+ply==3.11
+pycparser==2.21
+pygame==2.4.0
