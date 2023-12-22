@@ -16,14 +16,14 @@ Install python, as well as additional components for it. These are pygame and py
 
 Clone the repository using the command:
 
-```git clone https://github.com/FSK-idk/Spawner3.git```
+    git clone https://github.com/FSK-idk/Spawner3.git
 
 After that, go to the command line and navigate to the project folder.
 
 To start the game enter the following commands:
 
-```cd code```
-```python main.py```
+    cd code
+    python main.py
 
 And welcome to the game!
 
