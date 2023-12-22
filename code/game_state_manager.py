@@ -24,7 +24,7 @@ class GameStateManager:
             self.prev_state)
 
         self.is_show_pause_menu = False
-        self.pause_queue = []
+        self.pause_stack = []
 
     def update_state(self) -> None:
         if event := InputManager.get_event(UPDATE_STATE):
@@ -33,17 +33,26 @@ class GameStateManager:
 
                 if self.is_show_pause_menu:
                     # go out
-                    if self.pause_queue[-1] == event.state:
-                        if self.pause_queue[-1] != "gameplay":
-                            self.states[GameStateManager.current_state].exit_state()
-                            GameStateManager.current_state = self.pause_queue.pop()
-                        elif self.pause_queue[-1] == "gameplay":
+                    if self.prev_state == "pause_menu" and event.state == "main_menu":
+                        for state in self.pause_stack:
+                            self.states[state].exit_state()
+                        self.pause_stack = []
+                        GameStateManager.current_state = event.state
+                        self.states[GameStateManager.current_state].enter_state(
+                            self.prev_state)
+                        self.is_show_pause_menu = False
+
+                    elif self.pause_stack[-1] == event.state:
+                        if self.pause_stack[-1] == "gameplay":
                             GameStateManager.current_state = event.state
-                            self.pause_queue = []
+                            self.pause_stack = []
                             self.is_show_pause_menu = False
+                        elif self.pause_stack[-1] != "gameplay":
+                            self.states[GameStateManager.current_state].exit_state()
+                            GameStateManager.current_state = self.pause_stack.pop()
                     # go in
                     else:
-                        self.pause_queue.append(GameStateManager.current_state)
+                        self.pause_stack.append(GameStateManager.current_state)
                         GameStateManager.current_state = event.state
                         self.states[GameStateManager.current_state].enter_state(
                             self.prev_state)
@@ -51,7 +60,7 @@ class GameStateManager:
                 else:
                     if event.state == "pause_menu":
                         self.is_show_pause_menu = True
-                        self.pause_queue.append(event.prev_state)
+                        self.pause_stack.append(event.prev_state)
 
                     if event.prev_state == "begin_cutscene":
                         save_data.is_show_cutscene = False
@@ -74,7 +83,7 @@ class GameStateManager:
         self.update_gameplay_state()
 
         if self.is_show_pause_menu:
-            for state in self.pause_queue:
+            for state in self.pause_stack:
                 self.states[state].draw()
 
         self.states[GameStateManager.current_state].run()
