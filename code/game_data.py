@@ -28,7 +28,7 @@ class GameData:
         "Я люблю своих учеников",
         "Кто не сдаст 16 задач на хаскеле - в бан!",
         "Да мне все равно, я на доске программирую!",
-        "Вопрос не придумали? Двойка Вам за пару",
+        "Вопрос не придумали? Двойка Вам за пару"
     ]
 
     # level updates
@@ -37,8 +37,8 @@ class GameData:
     is_update_background = False
 
     # fonts
-    font_lana100 = pygame.font.Font(
-        project_folder + "/graphics/font/LanaPixel.ttf", 100)
+    font_lana150 = pygame.font.Font(
+        project_folder + "/graphics/font/LanaPixel.ttf", 150)
 
     font_lana50 = pygame.font.Font(
         project_folder + "/graphics/font/LanaPixel.ttf", 50)

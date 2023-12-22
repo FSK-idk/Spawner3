@@ -2,6 +2,7 @@ import pygame
 import pygame_widgets
 import webbrowser
 
+from utils import import_surface
 from button import Button
 from pygame_widgets.slider import Slider
 from input_manager import InputManager
@@ -12,6 +13,11 @@ class Menu:
     def __init__(self, name: str, display: pygame.Surface) -> None:
         self.name = name
         self.display = display
+        self.background_serf = import_surface(
+            GameData.project_folder + "/graphics/background_images/menu.png")
+        self.background_serf = pygame.transform.scale(
+            self.background_serf, self.display.get_size())
+        self.background_rect = self.background_serf.get_rect()
 
 
 class MainMenu(Menu):
@@ -43,9 +49,9 @@ class MainMenu(Menu):
             "quit")
 
     def draw_background(self) -> None:
-        self.display.fill("Yellow")
+        self.display.blit(self.background_serf, self.background_rect)
 
-        text = GameData.font_lana100.render("Spawner3", False, "Black")
+        text = GameData.font_lana150.render("Spawner3", False, "Black")
         text_rect = text.get_rect(
             center=(self.display.get_size()[0] / 2,
                     self.display.get_size()[1] / 3))
@@ -114,7 +120,7 @@ class SettingsMenu(Menu):
         self.slider.value = SettingsMenu.volume
 
     def draw_background(self) -> None:
-        self.display.fill("Yellow")
+        self.display.blit(self.background_serf, self.background_rect)
 
         text = GameData.font_lana50.render("Звук", False, "Black")
         text_rect = text.get_rect(
@@ -196,7 +202,7 @@ class DevelopersMenu(Menu):
             "quit")
 
     def draw_background(self) -> None:
-        self.display.fill("Yellow")
+        self.display.blit(self.background_serf, self.background_rect)
 
         text = GameData.font_lana50.render("Разработчики", False, "Black")
         text_rect = text.get_rect(

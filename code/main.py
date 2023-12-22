@@ -1,10 +1,12 @@
 import pygame
 
 from sys import exit
+from utils import import_surface
 from save_manager import SaveManager
 from game_state_manager import GameStateManager
 from sound_manager import SoundManager
 from input_manager import InputManager
+from game_data import GameData
 from save_data import save_data
 
 
@@ -15,6 +17,10 @@ class Game:
         self.display = pygame.display.set_mode(
             (save_data.screen_width, save_data.screen_height))
         pygame.display.set_caption("Spawner3")
+
+        pygame.display.set_icon(
+            import_surface(GameData.project_folder +
+                           "/graphics/gui/icons/icon256.png"))
 
         self.clock = pygame.time.Clock()
 
