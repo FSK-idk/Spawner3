@@ -15,7 +15,7 @@ class LevelState(State):
     def __init__(self, name, display) -> None:
         super().__init__(name, display)
 
-    def enter_state(self, prev_state: str) -> None:
+    def enter_state(self) -> None:
         self.level = Level(self.name, self.display)
 
     def exit_state(self) -> None:
@@ -32,7 +32,7 @@ class CutsceneState(State):
     def __init__(self, name: str, display: pygame.Surface) -> None:
         super().__init__(name, display)
 
-    def enter_state(self, prev_state: str) -> None:
+    def enter_state(self) -> None:
         self.cutscene = Cutscene(self.name, self.display)
 
     def exit_state(self) -> None:
@@ -49,12 +49,12 @@ class MenuState(State):
     def __init__(self, name: str, display: pygame.Surface) -> None:
         super().__init__(name, display)
 
-    def enter_state(self, prev_state: str) -> None:
+    def enter_state(self) -> None:
         match self.name:
             case "main_menu":
                 self.menu = MainMenu(self.name, self.display)
             case "settings":
-                self.menu = SettingsMenu(self.name, self.display, prev_state)
+                self.menu = SettingsMenu(self.name, self.display)
             case "developers":
                 self.menu = DevelopersMenu(self.name, self.display)
             case "pause_menu":

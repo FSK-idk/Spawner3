@@ -1,19 +1,21 @@
 class SaveData:
-    screen_width = 1280
-    screen_height = 720
-    fps = 60
+    def __init__(self):
+        self.screen_width = 1280
+        self.screen_height = 720
+        self.fps = 60
 
-    is_show_cutscene = True
+        self.is_show_begin_cutscene = True
+        self.is_show_end_cutscene = False
 
-    current_level = "cats"
-    player_position = (500, 450)
+        self.current_level = "cats"
+        self.player_position = (500, 450)
 
-    wood_amount = 0
-    stone_amount = 0
+        self.wood_amount = 0
+        self.stone_amount = 0
 
-    tree_level = 0
-    rock_level = 0
-    cats_level = 0
+        self.tree_level = 0
+        self.rock_level = 0
+        self.cats_level = 0
 
 
 save_data = SaveData()

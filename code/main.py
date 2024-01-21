@@ -6,7 +6,7 @@ from save_manager import SaveManager
 from game_state_manager import GameStateManager
 from sound_manager import SoundManager
 from input_manager import InputManager
-from game_data import GameData
+from game_data import GameData, RESET_SAVE_DATA
 from save_data import save_data
 
 
@@ -39,6 +39,9 @@ class Game:
 
     def handle_events(self) -> None:
         InputManager.events = list(pygame.event.get().copy())
+
+        if InputManager.get_event(RESET_SAVE_DATA):
+            self.save_manager.reset()
 
         if InputManager.get_event(pygame.QUIT):
             self.save_manager.save()

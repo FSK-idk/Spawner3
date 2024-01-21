@@ -194,6 +194,11 @@ class Level:
 
     def update_level(self) -> None:
         if self.name != save_data.current_level:
+            if save_data.cats_level == 2:
+                pygame.event.post(pygame.event.Event(
+                    UPDATE_SUBSTATE, substate="end_cutscene"))
+                return
+
             self.name = save_data.current_level
             self.zoom_group.empty()
             self.visible_sprites.empty()

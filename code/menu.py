@@ -74,19 +74,13 @@ class MainMenu(Menu):
                 match sprite.name:
                     case "play":
                         pygame.event.post(pygame.event.Event(
-                            UPDATE_STATE,
-                            state="gameplay",
-                            prev_state="main_menu"))
+                            UPDATE_STATE, state="gameplay"))
                     case "settings":
                         pygame.event.post(pygame.event.Event(
-                            UPDATE_STATE,
-                            state="settings",
-                            prev_state="main_menu"))
+                            UPDATE_SUBSTATE, substate="settings"))
                     case "developers":
                         pygame.event.post(pygame.event.Event(
-                            UPDATE_STATE,
-                            state="developers",
-                            prev_state="main_menu"))
+                            UPDATE_SUBSTATE, substate="developers"))
                     case "quit":
                         pygame.event.post(pygame.event.Event(pygame.QUIT))
 
@@ -97,11 +91,8 @@ class MainMenu(Menu):
 class SettingsMenu(Menu):
     volume = 100
 
-    def __init__(self, name: str, display: pygame.Surface,
-                 prev_state: str) -> None:
+    def __init__(self, name: str, display: pygame.Surface) -> None:
         super().__init__(name, display)
-        self.prev_state = prev_state
-
         width, height = self.display.get_size()
 
         self.buttons_group = pygame.sprite.Group()
@@ -150,17 +141,8 @@ class SettingsMenu(Menu):
                     and InputManager.get_event(pygame.MOUSEBUTTONDOWN)):
                 match sprite.name:
                     case "quit":
-                        if self.prev_state == "main_menu":
-                            pygame.event.post(pygame.event.Event(
-                                UPDATE_STATE,
-                                state="main_menu",
-                                prev_state="settings"))
-
-                        elif self.prev_state == "pause_menu":
-                            pygame.event.post(pygame.event.Event(
-                                UPDATE_STATE,
-                                state="pause_menu",
-                                prev_state="settings"))
+                        pygame.event.post(pygame.event.Event(
+                            UPDATE_SUBSTATE, substate="exit_substate"))
 
     def update(self) -> None:
         SettingsMenu.volume = self.slider.getValue()
@@ -264,9 +246,7 @@ class DevelopersMenu(Menu):
                         webbrowser.open_new("https://github.com/dmitry416")
                     case "quit":
                         pygame.event.post(pygame.event.Event(
-                            UPDATE_STATE,
-                            state="main_menu",
-                            prev_state="developers"))
+                            UPDATE_SUBSTATE, substate="exit_substate"))
 
     def update(self) -> None:
         self.input()
@@ -319,19 +299,13 @@ class PauseMenu(Menu):
                 match sprite.name:
                     case "continue":
                         pygame.event.post(pygame.event.Event(
-                            UPDATE_STATE,
-                            state="gameplay",
-                            prev_state="pause_menu"))
+                            UPDATE_SUBSTATE, substate="exit_substate"))
                     case "settings":
                         pygame.event.post(pygame.event.Event(
-                            UPDATE_STATE,
-                            state="settings",
-                            prev_state="pause_menu"))
+                            UPDATE_SUBSTATE, substate="settings"))
                     case "quit":
                         pygame.event.post(pygame.event.Event(
-                            UPDATE_STATE,
-                            state="main_menu",
-                            prev_state="pause_menu"))
+                            UPDATE_STATE, state="main_menu"))
 
     def update(self) -> None:
         self.input()

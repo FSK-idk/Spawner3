@@ -26,15 +26,18 @@ class SoundManager:
             pygame.mixer.music.set_volume(self.volume / 100.0)
 
         if (self.name == "menu"
-                and GameStateManager.current_state == "gameplay"):
+                and GameStateManager.current_state == "gameplay"
+                and GameStateManager.current_substate == ""):
             self.name = save_data.current_level
             self.change_music()
         elif (self.name != "menu"
-              and GameStateManager.current_state != "gameplay"):
+              and (GameStateManager.current_state == "main_menu"
+                   or GameStateManager.current_substate != "")):
             self.name = "menu"
             self.change_music()
         elif (self.name != "menu"
               and GameStateManager.current_state == "gameplay"
+              and GameStateManager.current_substate == ""
               and self.name != save_data.current_level):
             self.name = save_data.current_level
             self.change_music()

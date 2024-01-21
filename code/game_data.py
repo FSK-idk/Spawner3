@@ -4,6 +4,8 @@ from utils import get_parent_dir
 
 UPDATE_STATE = pygame.USEREVENT + 1
 UPDATE_GAMEPLAY_STATE = pygame.USEREVENT + 2
+UPDATE_SUBSTATE = pygame.USEREVENT + 3
+RESET_SAVE_DATA = pygame.USEREVENT + 4
 
 pygame.font.init()
 

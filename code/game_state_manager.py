@@ -5,13 +5,12 @@ from save_data import save_data
 
 class GameStateManager:
     current_state = "main_menu"
+    current_substate = ""
 
     def __init__(self, display: pygame.Surface) -> None:
         self.display = display
 
-        self.states = {
-            "gameplay": LevelState("cats", self.display),
-            "main_menu": MenuState("main_menu", self.display),
+        self.substates = {
             "pause_menu": MenuState("pause_menu", self.display),
             "settings": MenuState("settings", self.display),
             "developers": MenuState("developers", self.display),
@@ -19,71 +18,54 @@ class GameStateManager:
             "end_cutscene": CutsceneState("end", self.display)
         }
 
-        self.prev_state = None
-        self.states[GameStateManager.current_state].enter_state(
-            self.prev_state)
+        self.states = {
+            "gameplay": LevelState("cats", self.display),
+            "main_menu": MenuState("main_menu", self.display),
+        }
 
-        self.is_show_pause_menu = False
-        self.pause_stack = []
+        self.states[GameStateManager.current_state].enter_state()
+        self.substate_stack = []
 
     def update_state(self) -> None:
         if event := InputManager.get_event(UPDATE_STATE):
-            if GameStateManager.current_state != event.state:
-                self.prev_state = event.prev_state
+            while GameStateManager.current_substate != "":
+                self.substates[GameStateManager.current_substate].exit_state()
+                GameStateManager.current_substate = self.substate_stack.pop()
 
-                if self.is_show_pause_menu:
-                    # go out
-                    if self.prev_state == "pause_menu" and event.state == "main_menu":
-                        for state in self.pause_stack:
-                            self.states[state].exit_state()
-                        self.pause_stack = []
-                        GameStateManager.current_state = event.state
-                        self.states[GameStateManager.current_state].enter_state(
-                            self.prev_state)
-                        self.is_show_pause_menu = False
+            self.states[GameStateManager.current_state].exit_state()
+            GameStateManager.current_state = event.state
+            self.states[GameStateManager.current_state].enter_state()
 
-                    elif self.pause_stack[-1] == event.state:
-                        if self.pause_stack[-1] == "gameplay":
-                            GameStateManager.current_state = event.state
-                            self.pause_stack = []
-                            self.is_show_pause_menu = False
-                        elif self.pause_stack[-1] != "gameplay":
-                            self.states[GameStateManager.current_state].exit_state()
-                            GameStateManager.current_state = self.pause_stack.pop()
-                    # go in
-                    else:
-                        self.pause_stack.append(GameStateManager.current_state)
-                        GameStateManager.current_state = event.state
-                        self.states[GameStateManager.current_state].enter_state(
-                            self.prev_state)
+            if GameStateManager.current_state == "gameplay" and save_data.is_show_begin_cutscene:
+                self.substate_stack.append(GameStateManager.current_substate)
+                GameStateManager.current_substate = "begin_cutscene"
+                self.substates[GameStateManager.current_substate].enter_state()
 
-                else:
-                    if event.state == "pause_menu":
-                        self.is_show_pause_menu = True
-                        self.pause_stack.append(event.prev_state)
+    def update_substate(self):
+        if event := InputManager.get_event(UPDATE_SUBSTATE):
+            if event.substate == "exit_substate":
+                self.substates[GameStateManager.current_substate].exit_state()
+                GameStateManager.current_substate = self.substate_stack.pop()
+                return
 
-                    if event.prev_state == "begin_cutscene":
-                        save_data.is_show_cutscene = False
+            if GameStateManager.current_substate == event.substate:
+                return
 
-                    # check if there is cutscene
-                    if event.state == "gameplay" and save_data.is_show_cutscene:
-                        GameStateManager.current_state = "begin_cutscene"
-                    else:
-                        GameStateManager.current_state = event.state
-
-                    self.states[GameStateManager.current_state].enter_state(
-                        self.prev_state)
+            self.substate_stack.append(GameStateManager.current_substate)
+            GameStateManager.current_substate = event.substate
+            self.substates[GameStateManager.current_substate].enter_state()
 
     def update_gameplay_state(self) -> None:
         if event := InputManager.get_event(UPDATE_GAMEPLAY_STATE):
             save_data.current_level = event.state
 
     def update(self) -> None:
+        self.update_substate()
         self.update_state()
         self.update_gameplay_state()
 
-        if self.is_show_pause_menu:
-            for state in self.pause_stack:
-                self.states[state].draw()
-
-        self.states[GameStateManager.current_state].run()
+        if self.substate_stack:
+            self.states[GameStateManager.current_state].draw()
+            self.substates[GameStateManager.current_substate].run()
+        else:
+            self.states[GameStateManager.current_state].run()

@@ -60,7 +60,7 @@ class Player(pygame.sprite.Sprite):
                         self.root_animation_images[act][x_dir][y_dir].copy()
 
     def change_direction(self) -> None:
-        if gsm.GameStateManager.current_state == "gameplay":
+        if gsm.GameStateManager.current_substate == "":
             if InputManager.is_pressed(InputManager.go_left):
                 self.direction.x = -1
             elif InputManager.is_pressed(InputManager.go_right):
@@ -94,9 +94,7 @@ class Player(pygame.sprite.Sprite):
     def input(self) -> None:
         if InputManager.is_pressed(InputManager.pause):
             pygame.event.post(pygame.event.Event(
-                UPDATE_STATE,
-                state="pause_menu",
-                prev_state="gameplay"))
+                UPDATE_SUBSTATE, substate="pause_menu"))
 
         self.change_direction()
         self.change_animation_state()

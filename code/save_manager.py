@@ -23,3 +23,6 @@ class SaveManager:
     def save(self) -> None:
         with open(GameData.project_folder + "/data/data.save", "wb") as f:
             pickle.dump(save_data, f)
+
+    def reset(self) -> None:
+        save_data.__init__()

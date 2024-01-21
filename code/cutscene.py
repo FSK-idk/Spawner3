@@ -3,6 +3,7 @@ import pygame
 from utils import *
 from input_manager import InputManager
 from game_data import *
+from save_data import save_data
 
 
 class Cutscene:
@@ -10,8 +11,12 @@ class Cutscene:
         self.name = name
         self.display_surface = display
 
-        self.images = import_surfaces(
-            GameData.project_folder + "/graphics/cut_scenes/intro")
+        if name == "begin":
+            self.images = import_surfaces(
+                GameData.project_folder + "/graphics/cut_scenes/intro")
+        elif name == "end":
+            self.images = import_surfaces(
+                GameData.project_folder + "/graphics/cut_scenes/outro")
 
         for i in range(0, len(self.images)):
             self.images[i] = pygame.transform.scale(
@@ -45,7 +50,13 @@ class Cutscene:
                 self.is_action = False
 
         if self.index == len(self.images):
-            pygame.event.post(pygame.event.Event(
-                UPDATE_STATE,
-                state="gameplay",
-                prev_state="begin_cutscene"))
+            if self.name == "begin":
+                save_data.is_show_begin_cutscene = False
+                pygame.event.post(pygame.event.Event(
+                    UPDATE_SUBSTATE, substate="exit_substate"))
+            elif self.name == "end":
+                save_data.is_show_end_cutscene = False
+                pygame.event.post(pygame.event.Event(
+                    UPDATE_STATE, state="main_menu"))
+                pygame.event.post(pygame.event.Event(
+                    RESET_SAVE_DATA))
