@@ -5,7 +5,7 @@ from data.save_data import save_data
 
 
 class SaveManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.load()
 
     def load(self) -> None:

@@ -6,9 +6,11 @@ from level.groups.zoom_group import ZoomGroup
 from player.hud import HUD
 from level.background import Background
 from player.player import Player
-from level.tiles.tile import *
+from sprites.basic_sprites import StaticSprite
+from sprites.magic_sprites import MagicTree, MagicRock
+from sprites.teleport_sprite import TeleportSprite
 from npcs.npc import NPC
-from data.game_data import GameData
+from data.game_data import GameData, UPDATE_SUBSTATE
 from data.save_data import save_data
 
 

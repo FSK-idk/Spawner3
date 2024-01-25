@@ -42,7 +42,7 @@ class GameStateManager:
                 GameStateManager.current_substate = "begin_cutscene"
                 self.substates[GameStateManager.current_substate].enter_state()
 
-    def update_substate(self):
+    def update_substate(self) -> None:
         if event := InputManager.get_event(UPDATE_SUBSTATE):
             if event.substate == "exit_substate":
                 self.substates[GameStateManager.current_substate].exit_state()

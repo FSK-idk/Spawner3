@@ -1,5 +1,5 @@
 class SaveData:
-    def __init__(self):
+    def __init__(self) -> None:
         self.screen_width = 1280
         self.screen_height = 720
         self.fps = 60

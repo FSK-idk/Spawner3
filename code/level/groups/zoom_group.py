@@ -3,6 +3,7 @@ import pygame
 from player.player import Player
 from data.game_data import GameData
 from core.input_manager import InputManager
+from components.animation_component import AnimationComponent
 
 
 class ZoomGroup(pygame.sprite.Group):
@@ -52,6 +53,19 @@ class ZoomGroup(pygame.sprite.Group):
                                         * ZoomGroup.resize_coeff,
                                         root_image.get_size()[1]
                                         * ZoomGroup.resize_coeff))
+
+            elif isinstance(sprite, AnimationComponent):
+                image_list = sprite.root_animation_images
+                for i in range(len(sprite.animation_images)):
+                    root_image = image_list[i]
+                    sprite.animation_images[i] = \
+                        pygame.transform.scale(
+                        root_image, (
+                            root_image.get_size()[0]
+                            * ZoomGroup.resize_coeff,
+                            root_image.get_size()[1]
+                            * ZoomGroup.resize_coeff))
+
             else:
                 sprite.image = pygame.transform.scale(sprite.root_image, (
                     (sprite.root_image.get_size()[0] * ZoomGroup.resize_coeff),

@@ -6,9 +6,10 @@ from npcs.cost_bubble import CostBubble
 from npcs.text_cloud import TextCloud
 from data.game_data import GameData
 from data.save_data import save_data
+from components.animation_component import AnimationComponent
 
 
-class NPC(pygame.sprite.Sprite):
+class NPC(pygame.sprite.Sprite, AnimationComponent):
     def __init__(self, npc_groups: list, subgroups: list,
                  path: str, pos: (int, int), type: str) -> None:
         """
@@ -16,14 +17,13 @@ class NPC(pygame.sprite.Sprite):
             subgroups: groups to show bubble and cloud
             path: path to the NPC folder
         """
-        super().__init__(npc_groups)
+        pygame.sprite.Sprite.__init__(self, npc_groups)
         self.folder = path
         self.type = type
         self.position = pos
 
         # image
-        self.animations = import_surfaces(self.folder + "animation/")
-        self.root_image = self.animations[0]
+        self.root_image = import_surfaces(self.folder + "animation/")[0]
         self.image = self.root_image
         self.rect = self.image.get_rect(midbottom=self.position)
 
@@ -46,6 +46,10 @@ class NPC(pygame.sprite.Sprite):
         self.cooldown = 2000
         self.start_time = 0
         self.is_interact = False
+
+        # animation
+        AnimationComponent.__init__(self, self.folder)
+        self.frame_rate = 6
 
     def collide(self, show: bool) -> None:
         if self.type != "mesenev":
@@ -126,3 +130,6 @@ class NPC(pygame.sprite.Sprite):
         if (self.is_interact
                 and current_time - self.start_time >= self.cooldown):
             self.is_interact = False
+
+    def update(self) -> None:
+        self.animate()

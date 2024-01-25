@@ -1,9 +1,10 @@
 import pygame
 
 from collections import defaultdict
-from core.utils import *
+from core.utils import import_surface, import_surfaces, import_ysort, import_mask
 from npcs.npc import NPC
-from level.tiles.tile import TeleportSprite, InteractiveSprite
+from sprites.basic_sprites import InteractiveSprite
+from sprites.teleport_sprite import TeleportSprite
 import core.game_state_manager as gsm
 from core.input_manager import InputManager
 from data.game_data import *
