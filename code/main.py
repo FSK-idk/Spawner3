@@ -1,13 +1,13 @@
 import pygame
 
 from sys import exit
-from utils import import_surface
-from save_manager import SaveManager
-from game_state_manager import GameStateManager
-from sound_manager import SoundManager
-from input_manager import InputManager
-from game_data import GameData, RESET_SAVE_DATA
-from save_data import save_data
+from core.utils import import_surface
+from core.save_manager import SaveManager
+from core.game_state_manager import GameStateManager
+from core.sound_manager import SoundManager
+from core.input_manager import InputManager
+from data.game_data import GameData, RESET_SAVE_DATA
+from data.save_data import save_data
 
 
 class Game:

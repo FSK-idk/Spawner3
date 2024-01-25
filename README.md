@@ -18,12 +18,10 @@ Clone the repository using the command:
 
     git clone https://github.com/FSK-idk/Spawner3.git
 
-After that, go to the command line and navigate to the project folder.
+To start playing
 
-To start the game enter the following commands:
-
-    cd code
-    python main.py
+- If you are on Windows, then click on `Spawner3.exe`
+- For Linux there is `Spawner3.sh`
 
 And welcome to the game!
 

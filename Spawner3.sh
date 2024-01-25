@@ -1,0 +1,1 @@
+nohup python code/main.py </dev/null &> /dev/null &
