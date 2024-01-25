@@ -20,7 +20,7 @@ Clone the repository using the command:
 
 To start playing
 
-- If you are on Windows, then click on `Spawner3.exe`
+- If you are on Windows, then click on `Spawner3.bat`
 - For Linux there is `Spawner3.sh`
 
 And welcome to the game!
