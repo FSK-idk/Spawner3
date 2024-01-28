@@ -25,6 +25,10 @@ To start playing
 
 And welcome to the game!
 
+## Missed opportunities
+
+In the game, you can add animation to magic sprites if you add them to the `animation` folder. However, drawing animation requires time, which we don’t have.
+
 ## License
 
 MIT License
